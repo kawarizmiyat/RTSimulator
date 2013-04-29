@@ -1,0 +1,20 @@
+This is a simple simulator for RFID networks to implement 
+decentralized RFID algorithms using Writable tags. 
+
+At the time been, RRE is implemented. It would be easy to implement 
+LEO, RANDOM and DRRE with simple modifications. 
+
+We suggest that for each algorithm, we create a seperate subclasses for 
+Reader, Tag, TagContent, MessagePair. 
+
+
+Note: MessagePair seems to be very similar to TagContent. We keep it 
+though, for readability. 
+
+TODO: 
+1. Implement: LEO, DRRE, and RANDOM. 
+2. Read files for tags neighborhoods. 
+3. Implement GDE
+3.a. Implement GDE-Limited
+4. Implement RANDOM+
+5. Implement GDE-SI
