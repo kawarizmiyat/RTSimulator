@@ -1,12 +1,12 @@
 package com.algorithms.coverage;
 
-public class RREMessagePair {
+public class RREWriteMessage extends WriteMessage {
 
-	int id; 
-	int numTags;
+	public int id; 
+	public int numTags;
 	
 	
-	public RREMessagePair(int id, int numTags) {
+	public RREWriteMessage(int id, int numTags) {
 		super();
 		this.id = id;
 		this.numTags = numTags;

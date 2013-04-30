@@ -3,9 +3,12 @@ package com.simulator;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import com.algorithms.coverage.Message;
 import com.algorithms.coverage.RREReader;
 import com.algorithms.coverage.RRETag;
-import com.algorithms.coverage.RRETagContent;
+import com.algorithms.coverage.SingleRoundReader;
+import com.algorithms.coverage.OverWriteTag;
+import com.algorithms.coverage.TagContent;
 
 
 
@@ -20,8 +23,8 @@ public class SimSystem  {
 	private final int numReaders = 3;
 	private final int numTags = 4; 
 	
-	private ArrayList<RREReader> readersTable;
-	private ArrayList<RRETag> tagsTable;
+	private ArrayList<SingleRoundReader> readersTable;
+	private ArrayList<OverWriteTag> tagsTable;
 	private ArrayList<Integer> nonRedundantReaders;
 
 	
@@ -67,7 +70,7 @@ public class SimSystem  {
 	}
 
 	public void setupReaders(int n) {
-		readersTable = new ArrayList<RREReader>();
+		readersTable = new ArrayList<SingleRoundReader>();
 		for (int i = 0; i < n; i++) { 
 			if (D) { 
 				log.printf("Creating reader %d \n", i);
@@ -78,7 +81,7 @@ public class SimSystem  {
 	}
 
 	public void setupTags(int n) { 
-		tagsTable = new ArrayList<RRETag>();
+		tagsTable = new ArrayList<OverWriteTag>();
 		for (int i = 0; i < n; i++) { 
 			tagsTable.add(new RRETag(i));
 		}
@@ -112,7 +115,7 @@ public class SimSystem  {
 		Event e = new Event(); 
 		e.time = 0; 
 		e.action = EventType.MESSAGE; 
-		Message m = new Message(-1, i, RREReader.MSG_INIT, "", 
+		Message m = new Message(-1, i, SingleRoundReader.MSG_INIT, "", 
 				'r', 'r');
 		e.message = m;
 		this.future.enter(e);
@@ -213,7 +216,7 @@ public class SimSystem  {
 		}
 	}
 
-	public RRETagContent readTag(Integer i) {
+	public TagContent readTag(Integer i) {
 		
 		return tagsTable.get(i).readTag();
 		

@@ -1,34 +1,20 @@
 package com.algorithms.coverage;
 
-public class RRETagContent implements Comparable<RRETagContent>  {
+public class RRETagContent extends TagContent implements Comparable<RRETagContent>{
 
-	
-	public int id; 
-	public int numTags;
-	
+	public int id;
+	public int numTags; 
 	
 	public RRETagContent() { 
-		id = -1; 
-		numTags = -1;
+		this.id = -1;
+		this.numTags = -1;
 	}
 	
 	public RRETagContent(int id, int numTags) {
-		super();
-		this.id = id;
+		this.id = id; 
 		this.numTags = numTags;
 	}
-
-
-
-
-	@Override
-	public String toString() {
-		return "RRETagContent [id=" + id + ", numTags=" + numTags + "]";
-	}
-
-
-
-
+	
 	@Override
 	public int compareTo(RRETagContent o) {
 
@@ -58,6 +44,6 @@ public class RRETagContent implements Comparable<RRETagContent>  {
 	}
 	
 	
-	
-	
+
+
 }

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 import com.simulator.Event;
 import com.simulator.EventType;
-import com.simulator.Message;
 import com.simulator.SimSystem;
 
 public abstract class Reader {

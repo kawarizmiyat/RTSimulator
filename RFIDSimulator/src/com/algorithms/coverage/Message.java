@@ -1,4 +1,4 @@
-package com.simulator;
+package com.algorithms.coverage;
 
 public class Message {
 

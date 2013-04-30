@@ -2,6 +2,8 @@
 
 import java.util.Random;
 
+import com.algorithms.coverage.Message;
+
 public class Event implements Comparable<Event> {
 	
 
