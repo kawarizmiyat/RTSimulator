@@ -19,7 +19,7 @@ public abstract class OverWriteTag extends Tag {
 	}
 	
 	@Override
-	protected void handleReceivedMessage(Message message) {
+	public void handleReceivedMessage(Message message) {
 
 		if (message.msgType == SingleRoundReader.MSG_OVERWRITE) { 
 			overWrite(message); 

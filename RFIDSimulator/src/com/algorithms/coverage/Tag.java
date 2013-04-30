@@ -27,9 +27,9 @@ public abstract class Tag {
 		neighborsReaders.add(i);
 	}
 	
-	protected abstract void handleReceivedMessage(Message message);
-	protected abstract void handleEvent(Event e);
-	
+	public abstract void handleReceivedMessage(Message message);
+	public abstract void handleEvent(Event e);
+	public abstract TagContent readTag();
 
 
 	

@@ -20,7 +20,7 @@ public abstract class SingleRoundReader extends Reader {
 	private static final String STAT_TERMINATE = "terminate";
 	
 
-	public ArrayList<Integer> ownedTags;
+	
 	
 	public SingleRoundReader(SimSystem sim, int id) {
 		super(sim, id);

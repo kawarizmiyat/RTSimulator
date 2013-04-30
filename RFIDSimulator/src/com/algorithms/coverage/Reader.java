@@ -25,6 +25,9 @@ public abstract class Reader {
 
 	public static final String MSG_INIT = "init";
 	
+	
+	public ArrayList<Integer> ownedTags;
+	
 	public Reader(SimSystem sim, int id) { 
 		this.sim = sim; 
 		this.id = id; 
@@ -33,10 +36,10 @@ public abstract class Reader {
 		numNeighborTags= 0;
 	}
 	
-	protected abstract void handleEvent(Event e);
+	public abstract void handleEvent(Event e);
 	protected abstract void initProtocol() ;
 	protected abstract void handleReceivedMessage(Message message);
-	protected abstract boolean isTerminated();
+	public abstract boolean isTerminated();
 	protected abstract void changeStatus(String str);
 	
 	
