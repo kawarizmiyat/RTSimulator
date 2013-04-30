@@ -3,6 +3,10 @@ package com.simulator;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
+import com.algorithms.coverage.RREReader;
+import com.algorithms.coverage.RRETag;
+import com.algorithms.coverage.RRETagContent;
+
 
 
 public class SimSystem  {

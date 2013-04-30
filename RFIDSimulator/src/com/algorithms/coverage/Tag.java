@@ -1,7 +1,10 @@
-package com.simulator;
+package com.algorithms.coverage;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+
+import com.simulator.Event;
+import com.simulator.Message;
 
 public abstract class Tag {
 

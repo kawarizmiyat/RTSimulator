@@ -1,6 +1,11 @@
-package com.simulator;
+package com.algorithms.coverage;
 
 import java.util.ArrayList;
+
+import com.simulator.Event;
+import com.simulator.EventType;
+import com.simulator.Message;
+import com.simulator.SimSystem;
 
 public class RREReader extends Reader {
 
@@ -25,7 +30,7 @@ public class RREReader extends Reader {
 	}
 
 	@Override
-	protected void handleEvent(Event e) {
+	public void handleEvent(Event e) {
 		
 		if (e.time < now) { 
 			log.printf("Error at %d (handleEvent): event in past ",
@@ -179,7 +184,7 @@ public class RREReader extends Reader {
 	}
 
 	@Override
-	protected boolean isTerminated() {
+	public boolean isTerminated() {
 		return isTerminatedStatus(status);
 	}
 

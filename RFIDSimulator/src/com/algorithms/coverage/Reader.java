@@ -1,7 +1,12 @@
- package com.simulator; 
+ package com.algorithms.coverage; 
 
 import java.io.PrintStream;
 import java.util.ArrayList;
+
+import com.simulator.Event;
+import com.simulator.EventType;
+import com.simulator.Message;
+import com.simulator.SimSystem;
 
 public abstract class Reader {
 	
@@ -19,7 +24,7 @@ public abstract class Reader {
 	
 	public String status; 
 
-	protected static final String MSG_INIT = "init";
+	public static final String MSG_INIT = "init";
 	
 	public Reader(SimSystem sim, int id) { 
 		this.sim = sim; 
