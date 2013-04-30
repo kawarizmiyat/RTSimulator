@@ -13,11 +13,10 @@ public class Main  {
 
 		ArrayList< ArrayList<Integer> > g = 
 				GraphExtractor.readFile("test.txt");
-		GraphExtractor.printGraph(g);
 		
 		
 		SimSystem sim = new SimSystem();
-		sim.setRTGraph("rre", g);
+		sim.setRTGraph("randomPlus", g);
 		sim.run();
 		
 	}

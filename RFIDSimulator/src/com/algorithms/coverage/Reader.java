@@ -23,7 +23,7 @@ public abstract class Reader {
 	
 	public String status; 
 
-	public static final String MSG_INIT = "init";
+	public static final String MSG_INIT = "MSG_INIT";
 	
 	
 	public ArrayList<Integer> ownedTags;
@@ -34,14 +34,42 @@ public abstract class Reader {
 		neighborsTags = new ArrayList<Integer>();
 		neighborsReaders = new ArrayList<Integer>();
 		numNeighborTags= 0;
+		ownedTags = new ArrayList<Integer>();
 	}
 	
-	public abstract void handleEvent(Event e);
+	
+	// Note: this was moved from SingleRoundReader to Reader.
+	// This is done in order for this function to be used in 
+	// other type of Readers (e.g. MultiRoundReader).
+	public void handleEvent(Event e) { 
+		
+		if (e.time < now) { 
+			log.printf("Error at %d (handleEvent): event in past ",
+					this.id);
+		}
+		
+		updateTimer(e.time);
+		switch (e.action) { 
+		
+		case EventType.MESSAGE: 
+			handleReceivedMessage(e.message);
+			break ;
+		
+		default: 
+			System.out.printf("Only messages are allowed in handleEvent");
+			System.exit(0);
+			break; 
+		}
+			
+		
+	
+	}
+	
+	
 	protected abstract void initProtocol() ;
 	protected abstract void handleReceivedMessage(Message message);
-	public abstract boolean isTerminated();
-	protected abstract void changeStatus(String str);
-	
+	public abstract boolean isValidStatus(String str);
+	public abstract boolean isTerminatedStatus(String str) ;
 	
 	protected  void updateTimer(double d) { 
 		if (d < now) { 
@@ -132,6 +160,39 @@ public abstract class Reader {
 	public void addTagNeighbor(int i) { 
 		neighborsTags.add(i);
 		numNeighborTags ++; 
+	}
+	
+	protected void changeStatus(String str) {
+		if (isValidStatus(str)) { 
+			
+			if (D) { 
+				log.printf("Reader %d: changed status from: %s " +
+						" to %s \n", this.id, this.status, str);
+			}
+			
+			
+			status = str; 
+			if (isTerminatedStatus(str)) { 
+				log.printf("Reader %d terminated at %f \n",
+						this.id, this.now);
+			}
+		} else { 
+			log.printf("Error at reader %d: " +
+					"status is not accepted \n", this.id);
+		}
+ 	}
+
+	public boolean isTerminated() {
+		return isTerminatedStatus(status);
+	}
+	
+	public void ownTag(int i) {
+		
+		if (D) { 
+			log.printf("Reader %d owns Tag %d \n", 
+					this.id, i);
+		}
+		ownedTags.add(i);
 	}
 	
 }

@@ -1,6 +1,6 @@
 package com.algorithms.coverage.random;
 
-import java.util.Random;
+
 
 import com.algorithms.coverage.WriteMessage;
 

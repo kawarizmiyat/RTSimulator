@@ -4,6 +4,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 
 import com.algorithms.coverage.Message;
+import com.algorithms.coverage.MultiRoundReader;
+import com.algorithms.coverage.MultiRoundTag;
 import com.algorithms.coverage.Reader;
 import com.algorithms.coverage.SingleRoundReader;
 import com.algorithms.coverage.OverWriteTag;
@@ -27,8 +29,12 @@ public class SimSystem  {
 	// for keeping statistics
 	private final double END = 2000; // marks the end of the simulation period
 
-	private final int numReaders = 3;
-	private final int numTags = 4; 
+	
+	private final int MAX_ITERATIONS = 2; 
+	private int maxIterations;
+	
+	private int numReaders;
+	private int numTags; 
 	private boolean initReaders = false;
 
 	private ArrayList<Reader> readersTable;
@@ -36,16 +42,20 @@ public class SimSystem  {
 	private ArrayList<Integer> nonRedundantReaders;
 
 
-	private static final boolean D = false; 
+	private static final boolean D = true; 
+	private static final boolean badDebug = false;
+	
 	private final PrintStream log = System.out; 
 
 	public SimSystem() { 
 
 
 		setupSimulator(); 
+		maxIterations = MAX_ITERATIONS;
 		//test();
 
 
+		/*
 		setupReaders(numReaders);
 		setupTags(numTags);
 
@@ -53,8 +63,10 @@ public class SimSystem  {
 		for (int i = 0; i < numReaders; i++) {
 			setInitiator(i);
 		}
+		*/ 
 
-
+		
+		
 	}
 
 
@@ -117,17 +129,19 @@ public class SimSystem  {
 
 	private void setInitiator(int i) {
 
-		/*
+		
 		if (D) { 
 			log.printf("Reader %d is set to be initiator \n", i);
-		}*/ 
+		} 
 
 		Event e = new Event(); 
 		e.time = 0; 
 		e.action = EventType.MESSAGE; 
-		Message m = new Message(-1, i, SingleRoundReader.MSG_INIT, "", 
+		Message m = new Message(-1, i, Reader.MSG_INIT, "", 
 				'r', 'r');
 		e.message = m;
+		
+	
 		this.future.enter(e);
 	}
 
@@ -166,14 +180,16 @@ public class SimSystem  {
 			// only tags can receive messages: 
 			if (nextE.action == EventType.MESSAGE) {
 
-				/*
-				if (D) { 
+				
+				if (badDebug) { 
 					log.println("Next Event is of type message " +
 							nextE.message.msgType); 
 					log.printf("receivedId: %d \n", nextE.message.receiverId);
 					log.printf("target type: %c \n", nextE.message.targetType);
-				}*/ 
+				} 
 
+				
+				
 				int handlerId = nextE.message.receiverId;
 
 
@@ -245,8 +261,9 @@ public class SimSystem  {
 	// of reader i.
 	public void setRTGraph(String algorithm, ArrayList<ArrayList<Integer>> g) {
 
-		int tagsSize = getTagsSize(g);
-		initiateReaders(g.size(), tagsSize, algorithm);
+		numTags = getTagsSize(g);
+		numReaders = g.size();
+		initiateReaders(numReaders, numTags, algorithm);
 
 		for (int i = 0; i < g.size(); i++) { 
 
@@ -254,6 +271,10 @@ public class SimSystem  {
 				readersTable.get(i).addTagNeighbor(g.get(i).get(j));
 			}
 
+		}
+		
+		for (int i = 0; i < readersTable.size(); i ++ ) { 
+			setInitiator(i);
 		}
 
 	}
@@ -318,11 +339,28 @@ public class SimSystem  {
 					tagsTable.add(new RandomTag(i));
 				}
 			
+				
+			} else if (algorithm.equals("randomPlus")) {
+				
+				for (int i = 0; i < readersSize; i++) { 
+					
+					readersTable.add(
+							new MultiRoundReader(
+									this, i, maxIterations)
+							);
+				}
+				
+				for (int i = 0; i < tagsSize; i++) { 
+					tagsTable.add(new MultiRoundTag(i));
+				}
+				
+				
 			} else { 
 				System.out.printf("Error: cannot initiate, " +
 						"algorithm %s is not recognized \n", algorithm);
 			
-				System.out.println("Accepted algorithms are: rre, random, leo");
+				System.out.println("Accepted algorithms are: " +
+						"rre, random, leo, randomPlus.");
 				System.exit(0);
 			}
 			

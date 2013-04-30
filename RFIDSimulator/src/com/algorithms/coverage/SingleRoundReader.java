@@ -25,34 +25,13 @@ public abstract class SingleRoundReader extends Reader {
 	public SingleRoundReader(SimSystem sim, int id) {
 		super(sim, id);
 		
-		ownedTags = new ArrayList<Integer>();
 		changeStatus(SingleRoundReader.STAT_IDLE);
 	}
 
-	@Override
-	public void handleEvent(Event e) {
-		
-		if (e.time < now) { 
-			log.printf("Error at %d (handleEvent): event in past ",
-					this.id);
-		}
-		
-		updateTimer(e.time);
-		switch (e.action) { 
-		
-		case EventType.MESSAGE: 
-			handleReceivedMessage(e.message);
-			break ;
-		
-		default: 
-			System.out.printf("Only messages are allowed in handleEvent");
-			System.exit(0);
-			break; 
-		}
-			
-		
+	
+	// Shouldn't this be implemented in Reader instead ?
+	// TODO: verify ! 
 
-	}
 
 
 	@Override
@@ -130,16 +109,13 @@ public abstract class SingleRoundReader extends Reader {
 		for (int i = 0; i < neighborsTags.size(); i++) { 
 			TagContent tc = (TagContent) this.sim.readTag(neighborsTags.get(i));
 			
-
-			
-			
-			
+		
 			if (tc.id == this.id) { 
-				ownTag(i);
-
-
+				ownTag(neighborsTags.get(i));
 			}
 		}
+
+
 		
 		
 		// TODO: 
@@ -163,14 +139,7 @@ public abstract class SingleRoundReader extends Reader {
 
 
 
-	private void ownTag(int i) {
-		
-		if (D) { 
-			log.printf("Reader %d owns Tag %d \n", 
-					this.id, i);
-		}
-		ownedTags.add(i);
-	}
+
 
 	private void handleStatusIdle(Message message) {
 		
@@ -182,27 +151,16 @@ public abstract class SingleRoundReader extends Reader {
 		}
 	}
 
-	@Override
-	public boolean isTerminated() {
-		return isTerminatedStatus(status);
-	}
 
-	@Override
-	protected void changeStatus(String str) {
-		if (isValidStatus(str)) { 
-			status = str; 
-			if (isTerminatedStatus(str)) { 
-				log.printf("Reader %d terminated at %f \n",
-						this.id, this.now);
-			}
-		}
- 	}
 
-	private boolean isTerminatedStatus(String str) {
+	
+
+
+	public boolean isTerminatedStatus(String str) {
 		return str == SingleRoundReader.STAT_TERMINATE;
 	}
 
-	private boolean isValidStatus(String str) {
+	public boolean isValidStatus(String str) {
 		
 		return (str == SingleRoundReader.STAT_IDLE || 
 				str == SingleRoundReader.STAT_WAIT || 
