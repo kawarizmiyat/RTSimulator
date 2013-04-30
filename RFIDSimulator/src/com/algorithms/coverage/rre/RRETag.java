@@ -1,4 +1,7 @@
-package com.algorithms.coverage;
+package com.algorithms.coverage.rre;
+
+import com.algorithms.coverage.Message;
+import com.algorithms.coverage.OverWriteTag;
 
 
 public class RRETag extends OverWriteTag {
@@ -6,7 +9,7 @@ public class RRETag extends OverWriteTag {
 	public RRETag(int id) {
 		super(id);
 		tc = new RRETagContent();
-		// TODO Auto-generated constructor stub
+
 	}
 
 	@Override

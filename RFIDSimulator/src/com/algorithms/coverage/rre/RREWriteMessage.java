@@ -1,4 +1,6 @@
-package com.algorithms.coverage;
+package com.algorithms.coverage.rre;
+
+import com.algorithms.coverage.WriteMessage;
 
 public class RREWriteMessage extends WriteMessage {
 

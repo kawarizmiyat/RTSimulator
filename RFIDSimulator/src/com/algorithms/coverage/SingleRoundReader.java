@@ -2,6 +2,7 @@ package com.algorithms.coverage;
 
 import java.util.ArrayList;
 
+import com.algorithms.coverage.rre.RRETagContent;
 import com.simulator.Event;
 import com.simulator.EventType;
 import com.simulator.SimSystem;
@@ -127,26 +128,16 @@ public abstract class SingleRoundReader extends Reader {
 		if (message.msgType == SingleRoundReader.MSG_TIMER_WAIT) { 
 		
 		for (int i = 0; i < neighborsTags.size(); i++) { 
-			RRETagContent tc = (RRETagContent) this.sim.readTag(neighborsTags.get(i));
+			TagContent tc = (TagContent) this.sim.readTag(neighborsTags.get(i));
 			
-			if (D) { 
-				log.printf("Reader %d read content of Tag %d which " +
-						" is: (%d, %d) \n", 
-						this.id, i, tc.id, tc.numTags);
-				
-			}
+
 			
 			
 			
 			if (tc.id == this.id) { 
 				ownTag(i);
 
-				// TODO: you can add some error prevention checkers: 
-				if (tc.numTags != this.neighborsTags.size()) { 
-					log.printf("Error: oops ! neighbors Tags is not the " +
-							"the same as numTags at redaer %d and tag %d", 
-							this.id, i);
-				}
+
 			}
 		}
 		

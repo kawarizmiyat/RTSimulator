@@ -1,5 +1,7 @@
-package com.algorithms.coverage;
+package com.algorithms.coverage.rre;
 
+import com.algorithms.coverage.SingleRoundReader;
+import com.algorithms.coverage.WriteMessage;
 import com.simulator.SimSystem;
 
 public class RREReader extends SingleRoundReader {

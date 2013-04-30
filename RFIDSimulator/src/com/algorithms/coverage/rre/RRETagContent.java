@@ -1,8 +1,9 @@
-package com.algorithms.coverage;
+package com.algorithms.coverage.rre;
+
+import com.algorithms.coverage.TagContent;
 
 public class RRETagContent extends TagContent implements Comparable<RRETagContent>{
 
-	public int id;
 	public int numTags; 
 	
 	public RRETagContent() { 
@@ -41,6 +42,11 @@ public class RRETagContent extends TagContent implements Comparable<RRETagConten
 		
 		return -1;
 		
+	}
+
+	@Override
+	public String toString() {
+		return "RRETagContent [id=" + id + ", numTags=" + numTags + "]";
 	}
 	
 	
