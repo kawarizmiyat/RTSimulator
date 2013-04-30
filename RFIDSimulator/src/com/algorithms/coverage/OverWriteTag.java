@@ -31,13 +31,9 @@ public abstract class OverWriteTag extends Tag {
 		
 	}
 
+	// abstract function. 
 	protected abstract void overWrite(Message msg);
 	
-/*	private void overwrite(Message message) {
-		
-		
-	}
-*/
 	@Override
 	public void handleEvent(Event e) {
 

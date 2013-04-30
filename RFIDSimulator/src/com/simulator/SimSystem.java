@@ -7,6 +7,8 @@ import com.algorithms.coverage.Message;
 import com.algorithms.coverage.SingleRoundReader;
 import com.algorithms.coverage.OverWriteTag;
 import com.algorithms.coverage.TagContent;
+import com.algorithms.coverage.leo.LeoReader;
+import com.algorithms.coverage.leo.LeoTag;
 import com.algorithms.coverage.random.RandomReader;
 import com.algorithms.coverage.random.RandomTag;
 import com.algorithms.coverage.rre.RREReader;
@@ -77,7 +79,7 @@ public class SimSystem  {
 			if (D) { 
 				log.printf("Creating reader %d \n", i);
 			}
-			readersTable.add(new RandomReader(this, i));
+			readersTable.add(new LeoReader(this, i));
 		}
 
 	}
@@ -85,7 +87,7 @@ public class SimSystem  {
 	public void setupTags(int n) { 
 		tagsTable = new ArrayList<OverWriteTag>();
 		for (int i = 0; i < n; i++) { 
-			tagsTable.add(new RandomTag(i));
+			tagsTable.add(new LeoTag(i));
 		}
 	}
 	
