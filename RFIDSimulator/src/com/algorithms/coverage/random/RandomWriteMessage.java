@@ -10,10 +10,10 @@ public class RandomWriteMessage extends WriteMessage {
 	public double rand;
 	
 	
-	public RandomWriteMessage(int id) {
+	public RandomWriteMessage(int id, double rand) {
 		super();
 		this.id = id;
-		this.rand = new Random().nextDouble();
+		this.rand = rand;
 	}
 
 	
