@@ -16,7 +16,7 @@ public class RandomReader extends SingleRoundReader {
 		rand = new Random().nextDouble();
 		
 		if (D) { 
-			log.printf("Tag %d is set with rand val: %f \n", 
+			log.printf("reader %d is set with rand val: %f \n", 
 					id, rand);
 		}
 		// TODO Auto-generated constructor stub

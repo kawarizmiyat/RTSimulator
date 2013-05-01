@@ -2,6 +2,7 @@ package com.algorithms.coverage.random;
 
 import com.algorithms.coverage.Message;
 import com.algorithms.coverage.OverWriteTag;
+import com.algorithms.coverage.randomplus.RandomPlusTagContent;
 import com.algorithms.coverage.rre.RRETagContent;
 import com.algorithms.coverage.rre.RREWriteMessage;
 
@@ -14,20 +15,20 @@ public class RandomTag extends OverWriteTag {
 
 	@Override
 	protected void overWrite(Message msg) {
-		if (D) { 
-			log.printf("At overwrite %d orig:(%f,%d) \n", this.id, 
-					((RandomTagContent) tc).rand, 
-					((RandomTagContent) tc).id);
-		}
+
 		
 		RandomWriteMessage mc = (RandomWriteMessage) msg.msgContent; 
 		RandomTagContent temp = new RandomTagContent(mc.id, mc.rand);
 		
 		
 		if (D) { 
-			log.println("Actual tag content " + tc);
-			log.println("to be written tcontent: " + temp);
-		} 
+			log.printf("tag %d at overwrite, orig value: (%f,%d), " +
+					"to be written: (%f, %d) \n", this.id, 
+					((RandomTagContent) tc).rand, 
+					((RandomTagContent) tc).id, 
+					temp.rand, temp.id);
+		}
+		
 		
 		if (((RandomTagContent) tc).compareTo(temp) < 0) { 
 			
@@ -36,19 +37,11 @@ public class RandomTag extends OverWriteTag {
 			numOverWrites ++;
 			
 			if (D) { 
-				log.printf("Switching the current value of tag %d to + " +
-						"(%f,%d) \n", 
-						this.id, 
-						((RandomTagContent) tc).rand, 
-						((RandomTagContent) tc).id);
+				log.printf("*** tag %d had its value overwritten *** \n", this.id);
 			}
+			
 		}
 		
-		
-		if (D) { 
-			log.println("new value of tag content is " + this.tc);
-		} 
-
 
 	}
 

@@ -4,6 +4,7 @@ import java.util.Random;
 
 import com.algorithms.coverage.Message;
 import com.algorithms.coverage.Reader;
+import com.algorithms.coverage.Tag;
 import com.algorithms.coverage.TagContent;
 import com.algorithms.coverage.WriteMessage;
 import com.algorithms.coverage.random.RandomWriteMessage;
@@ -85,7 +86,7 @@ public class RandomPlusReader extends Reader {
 					RandomPlusReader.MSG_OVERWRITE, 
 					msg, 
 					Reader.myType, 
-					't');
+					Tag.myType);
 					
 			sendMessage(m);
 		}
@@ -189,6 +190,16 @@ public class RandomPlusReader extends Reader {
 				ownTag(neighborsTags.get(i));
 			}
 		}
+		
+		// A better way to implement this is the following. 
+		// change status to STAT_READ. schedule a timer to 
+		// now + 1. 
+		// In handleSateRead(). Check if redundant. 
+		// If yes. Go to terminate. 
+		// Otherwise. StartRound again. 
+		 scheduleTimer(this.msgDelay(), 
+					RandomPlusReader.MSG_TIMER_READ); 
+			 changeStatus(RandomPlusReader.STAT_READ);
 
 		} else { 
 			
@@ -220,15 +231,7 @@ public class RandomPlusReader extends Reader {
 
 		*/ 
 		
-		// A better way to implement this is the following. 
-		// change status to STAT_READ. schedule a timer to 
-		// now + 1. 
-		// In handleSateRead(). Check if redundant. 
-		// If yes. Go to terminate. 
-		// Otherwise. StartRound again. 
-		 scheduleTimer(this.msgDelay(), 
-					RandomPlusReader.MSG_TIMER_READ); 
-			 changeStatus(RandomPlusReader.STAT_READ);
+
 		
 		
 	}

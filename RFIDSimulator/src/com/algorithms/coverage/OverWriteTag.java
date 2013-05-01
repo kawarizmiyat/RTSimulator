@@ -34,27 +34,6 @@ public abstract class OverWriteTag extends Tag {
 	// abstract function. 
 	protected abstract void overWrite(Message msg);
 	
-	@Override
-	public void handleEvent(Event e) {
 
-		if (D) { 
-			log.printf("Tag %d handling a new Event at %f \n", 
-					this.id, e.time);
-		}
-		
-		now = e.time; 
-		switch (e.action) { 
-		
-		case EventType.MESSAGE: 
-			handleReceivedMessage(e.message);
-			break ;
-		
-		default: 
-			System.out.printf("Only messages are allowed in handleEvent");
-			System.exit(0);
-			break; 
-		}
-		
-	}
 
 }

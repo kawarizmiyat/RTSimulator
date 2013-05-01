@@ -2,6 +2,7 @@ package com.algorithms.coverage.leo;
 
 import com.algorithms.coverage.Message;
 import com.algorithms.coverage.OverWriteTag;
+import com.algorithms.coverage.randomplus.RandomPlusTagContent;
 
 public class LeoTag  extends OverWriteTag {
 
@@ -13,19 +14,18 @@ public class LeoTag  extends OverWriteTag {
 
 	@Override
 	protected void overWrite(Message msg) {
-		if (D) { 
-			log.printf("At overwrite %d orig:(id:%d) \n", 
-					this.id, 
-					((LeoTagContent) tc).id);
-		}		
+	
 		
 		LeoWriteMessage mc = (LeoWriteMessage) msg.msgContent; 
 		LeoTagContent temp = new LeoTagContent(mc.id);
 
+		
 		if (D) { 
-			log.println("Actual tag content " + tc);
-			log.println("to be written tcontent: " + temp);
-		} 
+			log.printf("tag %d at overwrite, orig value: (%d), " +
+					"to be written: (%d) \n", this.id, 
+					((LeoTagContent) tc).id, 
+					temp.id);
+		}
 		
 		// The first overwrites. Everyone no ! 
 		// Though be careful, this is a very simplistic 
@@ -33,19 +33,13 @@ public class LeoTag  extends OverWriteTag {
 		if (tc.id == -1) { 
 			numOverWrites ++; 
 			tc.id = temp.id; 
+
 			if (D) { 
-				log.printf("Switching the current value of tag %d to + " +
-						"(%d) \n", 
-						this.id, 
-						((LeoTagContent) tc).id);
+				log.printf("*** tag %d had its value overwritten *** \n", this.id);
 			}
 		}
 		
 		
-		
-		if (D) { 
-			log.println("New value of tag content is " + this.tc);
-		} 
 
 		
 	}

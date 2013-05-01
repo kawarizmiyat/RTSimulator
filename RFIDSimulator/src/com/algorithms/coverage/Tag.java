@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 
 import com.simulator.Event;
+import com.simulator.EventType;
 
 public abstract class Tag {
 
@@ -28,9 +29,30 @@ public abstract class Tag {
 	}
 	
 	public abstract void handleReceivedMessage(Message message);
-	public abstract void handleEvent(Event e);
 	public abstract TagContent readTag();
 
 
+	public void handleEvent(Event e) {
+
+		if (D) { 
+			log.printf("tag %d handling a new Event at %f \n", 
+					this.id, e.time);
+		}
+		
+		now = e.time; 
+		switch (e.action) { 
+		
+		case EventType.MESSAGE: 
+			handleReceivedMessage(e.message);
+			break ;
+		
+		default: 
+			System.out.printf("Only messages are allowed in handleEvent");
+			System.exit(0);
+			break; 
+		}
+		
+	}
+	
 	
 }

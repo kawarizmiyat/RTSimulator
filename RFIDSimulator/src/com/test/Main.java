@@ -16,7 +16,7 @@ public class Main  {
 		
 		
 		SimSystem sim = new SimSystem();
-		sim.setRTGraph("randomPlus", g);
+		sim.setRTGraph("gde", g);
 		sim.run();
 		
 	}

@@ -9,6 +9,8 @@ import com.algorithms.coverage.SingleRoundReader;
 import com.algorithms.coverage.OverWriteTag;
 import com.algorithms.coverage.Tag;
 import com.algorithms.coverage.TagContent;
+import com.algorithms.coverage.gde.GDEReader;
+import com.algorithms.coverage.gde.GDETag;
 import com.algorithms.coverage.leo.LeoReader;
 import com.algorithms.coverage.leo.LeoTag;
 import com.algorithms.coverage.random.RandomReader;
@@ -27,7 +29,7 @@ public class SimSystem  {
 	public EventQueue future;
 
 	// for keeping statistics
-	private final double END = 2000; // marks the end of the simulation period
+	private final double END = 20; // marks the end of the simulation period
 
 	
 	private final int MAX_ITERATIONS = 2; 
@@ -367,6 +369,15 @@ public class SimSystem  {
 					tagsTable.add(new RandomPlusTag(i));
 				}
 				
+			} else if (algorithm.equals("gde")) { 
+				
+				for (int i = 0; i < readersSize; i++ ) {
+					readersTable.add(new GDEReader(this, i));
+				}
+				
+				for (int i = 0; i < tagsSize; i++) { 
+					tagsTable.add(new GDETag(i));
+				}
 				
 			} else { 
 				System.out.printf("Error: cannot initiate, " +
