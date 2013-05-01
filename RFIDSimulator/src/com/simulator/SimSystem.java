@@ -4,8 +4,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 
 import com.algorithms.coverage.Message;
-import com.algorithms.coverage.MultiRoundReader;
-import com.algorithms.coverage.MultiRoundTag;
 import com.algorithms.coverage.Reader;
 import com.algorithms.coverage.SingleRoundReader;
 import com.algorithms.coverage.OverWriteTag;
@@ -15,6 +13,8 @@ import com.algorithms.coverage.leo.LeoReader;
 import com.algorithms.coverage.leo.LeoTag;
 import com.algorithms.coverage.random.RandomReader;
 import com.algorithms.coverage.random.RandomTag;
+import com.algorithms.coverage.randomplus.RandomPlusReader;
+import com.algorithms.coverage.randomplus.RandomPlusTag;
 import com.algorithms.coverage.rre.RREReader;
 import com.algorithms.coverage.rre.RRETag;
 
@@ -131,7 +131,7 @@ public class SimSystem  {
 
 		
 		if (D) { 
-			log.printf("Reader %d is set to be initiator \n", i);
+			log.printf("reader %d is set to be initiator \n", i);
 		} 
 
 		Event e = new Event(); 
@@ -151,15 +151,19 @@ public class SimSystem  {
 	}
 
 	public void run(){
-		System.out.println("simulation starts");		
+		System.out.println("**** simulation starts **** ");		
 
 
 		while(true){
 
 			if(0 == future.getNbEvents()) { 
-				log.printf("No more events \n");
-				testTermination();
-				analyzeResults();
+
+				if (correctTermination()) { 
+					log.printf("*** simulation terminated *** \n");
+					analyzeResults();
+				} else { 
+					log.printf("error: some readers did not terminate \n");
+				}
 
 				break;
 			}
@@ -208,14 +212,21 @@ public class SimSystem  {
 	}
 
 	private void analyzeResults() {
+		
+		log.printf("*** analyzing results *** \n");
+		
 		nonRedundantReaders = new ArrayList<Integer>();
 		for (int i = 0; i < readersTable.size(); i++) { 
 			if (readersTable.get(i).ownedTags.size() > 0) { 
 
-				// if (D) { 
-				log.printf("Reader %d is not redundant \n",
+				if (D) { 
+					log.printf("reader %d is not redundant: ",
 						readersTable.get(i).id);
-				//}
+					for (int j = 0; j < readersTable.get(i).ownedTags.size(); j++) { 
+						log.printf("%d ", readersTable.get(i).ownedTags.get(j));
+					}
+					log.printf("\n");
+				}
 				nonRedundantReaders.add(readersTable.get(i).id);
 			}
 		}
@@ -233,13 +244,15 @@ public class SimSystem  {
 
 	}
 
-	private void testTermination() {
+	private boolean correctTermination() {
 		for (int i = 0; i < this.readersTable.size(); i++) { 
 			if (! readersTable.get(i).isTerminated()) { 
-				log.printf("At least Reader %d did not terminate \n",
+				log.printf("at least Reader %d did not terminate \n",
 						i);
+				return false;
 			}
 		}
+		return true;
 	}
 
 	// This functions works as a connector between 
@@ -345,13 +358,13 @@ public class SimSystem  {
 				for (int i = 0; i < readersSize; i++) { 
 					
 					readersTable.add(
-							new MultiRoundReader(
+							new RandomPlusReader(
 									this, i, maxIterations)
 							);
 				}
 				
 				for (int i = 0; i < tagsSize; i++) { 
-					tagsTable.add(new MultiRoundTag(i));
+					tagsTable.add(new RandomPlusTag(i));
 				}
 				
 				

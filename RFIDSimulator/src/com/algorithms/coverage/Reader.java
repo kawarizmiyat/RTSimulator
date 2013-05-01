@@ -44,7 +44,7 @@ public abstract class Reader {
 	public void handleEvent(Event e) { 
 		
 		if (e.time < now) { 
-			log.printf("Error at %d (handleEvent): event in past ",
+			log.printf("error at reader %d: event in past at handleEvent ",
 					this.id);
 		}
 		
@@ -56,7 +56,9 @@ public abstract class Reader {
 			break ;
 		
 		default: 
-			System.out.printf("Only messages are allowed in handleEvent");
+			
+			log.printf("error at reader %d: Only messages are allowed in handleEvent", 
+					this.id);
 			System.exit(0);
 			break; 
 		}
@@ -73,15 +75,13 @@ public abstract class Reader {
 	
 	protected  void updateTimer(double d) { 
 		if (d < now) { 
-			log.printf("Error (updateTimer) at Reader %d: schduler error, event " +
-					"in the past !", this.id);
+			log.printf("error at reader %d: event in past at updateTimer ",
+					this.id);
 		}
 		now = d;
 	}
 	
 	protected void sendMessage(Message msg) { 
-		
-		
 		
 		if (D) { 
 			
@@ -104,24 +104,24 @@ public abstract class Reader {
 
 	private String getDebugSourceString(Message msg) {
 
-		if (msg.sourceType == 'r') { return "Reader"; }
-		else if (msg.sourceType == 't') { return "Tag"; }
+		if (msg.sourceType == 'r') { return "reader"; }
+		else if (msg.sourceType == 't') { return "tag"; }
 		else { 
 			log.printf(
-					"Error: sourceType can be either r or t but " +
-					"found %c \n", msg.sourceType);
+					"error at reader %d: sourceType can be either r or t but " +
+					"found %c \n", this.id, msg.sourceType);
 			System.exit(0);
 		}
 		return null;
 	}
 
 	private String getDebugTargetString(Message msg) {
-		if (msg.targetType == 'r') { return "Reader"; }
-		else if (msg.targetType == 't') { return "Tag"; }
+		if (msg.targetType == 'r') { return "reader"; }
+		else if (msg.targetType == 't') { return "tag"; }
 		else { 
 			log.printf(
-					"Error: sourceType can be either r or t but " +
-					"found %c \n", msg.targetType);
+					"error at raeder %d: sourceType can be either r or t but " +
+					"found %c \n", this.id, msg.targetType);
 			System.exit(0);
 		}
 		return null;
@@ -133,8 +133,8 @@ public abstract class Reader {
 		
 		if (D) { 
 			log.printf(
-					"%d schedules a timer for %f time slots \n", 
-					this.id, d);
+					"reader %d schedules a timer of type %s for %f time slots \n", 
+					this.id, timerType, d);
 		}
 		
 		Message m  = new Message(this.id, this.id, 
@@ -166,18 +166,18 @@ public abstract class Reader {
 		if (isValidStatus(str)) { 
 			
 			if (D) { 
-				log.printf("Reader %d: changed status from: %s " +
+				log.printf("reader %d changed status from: %s " +
 						" to %s \n", this.id, this.status, str);
 			}
 			
 			
 			status = str; 
 			if (isTerminatedStatus(str)) { 
-				log.printf("Reader %d terminated at %f \n",
+				log.printf("reader %d terminated at %f \n",
 						this.id, this.now);
 			}
 		} else { 
-			log.printf("Error at reader %d: " +
+			log.printf("error at reader %d: " +
 					"status is not accepted \n", this.id);
 		}
  	}
@@ -189,7 +189,7 @@ public abstract class Reader {
 	public void ownTag(int i) {
 		
 		if (D) { 
-			log.printf("Reader %d owns Tag %d \n", 
+			log.printf("reader %d owns tag %d \n", 
 					this.id, i);
 		}
 		ownedTags.add(i);

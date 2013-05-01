@@ -1,11 +1,15 @@
-package com.algorithms.coverage;
+package com.algorithms.coverage.randomplus;
 
 import java.util.Random;
 
+import com.algorithms.coverage.Message;
+import com.algorithms.coverage.Reader;
+import com.algorithms.coverage.TagContent;
+import com.algorithms.coverage.WriteMessage;
 import com.algorithms.coverage.random.RandomWriteMessage;
 import com.simulator.SimSystem;
 
-public class MultiRoundReader extends Reader {
+public class RandomPlusReader extends Reader {
 
 	public boolean active; 
 	public int round; 
@@ -25,13 +29,13 @@ public class MultiRoundReader extends Reader {
 	protected static final String MSG_TIMER_READ = "MSG_TIMER_READ";
 	protected static final String MSG_OVERWRITE = "MSG_OVERWRITE";
 	
-	public MultiRoundReader(SimSystem sim, int id, int maxIt) {
+	public RandomPlusReader(SimSystem sim, int id, int maxIt) {
 		super(sim, id);
 		active = true;
 		round = 0;
 		
 		maxIterations = maxIt; 
-		changeStatus(MultiRoundReader.STAT_IDLE);
+		changeStatus(RandomPlusReader.STAT_IDLE);
 		
 	}
 
@@ -46,23 +50,25 @@ public class MultiRoundReader extends Reader {
 		round ++;
 		rand = new Random().nextDouble(); 
 		
-		if (D) { 
-			log.printf("Starting round %d at Reader %d " +
-					"with %f as rand \n", round, this.id, this.rand);
-		}
+		
 		
 		if (round > maxIterations) { 
-			changeStatus(MultiRoundReader.STAT_TERMINATE); 
+			changeStatus(RandomPlusReader.STAT_TERMINATE); 
 			return;
 		}
 		
-		
+		if (D) { 
+			log.printf("*** reader %d (rand:%f) starting round %d ***\n",  
+					this.id, this.rand, round); 
+		}		
 		
 		// start algorithm here: 
 		// for every active neighbor tag: 
 		// write content .. 
 		// But wait ! -- we are implementing RANDOM+ here. 
 		// Therefore, for every neighbor tag.
+		
+		ownedTags.clear();
 		
 		// for each neighbor tag, 
 		// send a message of type: overwrite.
@@ -76,7 +82,7 @@ public class MultiRoundReader extends Reader {
 			WriteMessage msg = getWriteMessage();
 			
 			Message m = new Message(this.id, neighborsTags.get(i), 
-					MultiRoundReader.MSG_OVERWRITE, 
+					RandomPlusReader.MSG_OVERWRITE, 
 					msg, 
 					Reader.myType, 
 					't');
@@ -85,8 +91,8 @@ public class MultiRoundReader extends Reader {
 		}
 		
 		 scheduleTimer(2* this.msgDelay(), 
-				MultiRoundReader.MSG_TIMER_WRITE); 
-		 changeStatus(MultiRoundReader.STAT_WRITE);
+				RandomPlusReader.MSG_TIMER_WRITE); 
+		 changeStatus(RandomPlusReader.STAT_WRITE);
 	
 		
 	}
@@ -101,29 +107,41 @@ public class MultiRoundReader extends Reader {
 	@Override
 	protected void handleReceivedMessage(Message message) {
 		if (this.id != message.receiverId) { 
-			log.printf("Error: received message is not destined to" +
+			log.printf("error at %d: reader %d received message is not destined to" +
 					"the correct destination (%d != %d) \n", 
-					this.id, message.receiverId);
+					this.id, this.id, message.receiverId);
 		}
 		
 		
 		if (D) { 
-			log.printf("Reader %d received message (t: %s) from (%d) \n", 
+			
+			if (message.receiverId == message.senderId) { 
+				log.printf("reader %d wakes up with timer %s \n", 
+						this.id, 
+						message.msgType);
+			} else if (message.senderId == -1 && message.msgType == Reader.MSG_INIT ) {
+				
+				log.printf("reader %d starts algorithm \n", this.id);
+				
+			} else {
+			
+				log.printf("reader %d received message (t: %s) from (%d) \n", 
 					this.id, message.msgType, message.senderId);
+			}
 		}
 		
-		if (status == MultiRoundReader.STAT_IDLE) { 
+		if (status == RandomPlusReader.STAT_IDLE) { 
 			handleStatusIdle(message);
 		
-		} else if (status == MultiRoundReader.STAT_READ) { 
+		} else if (status == RandomPlusReader.STAT_READ) { 
 			handleStatusRead(message);
 			
-		} else if (status == MultiRoundReader.STAT_WRITE) { 
+		} else if (status == RandomPlusReader.STAT_WRITE) { 
 			handleStatusWrite(message);
 
 		} else { 
-			log.printf("Error: cannot receive message at state %s \n",
-					status);
+			log.printf("error at reader %d: cannot receive message at state %s \n",
+					this.id, status);
 			System.exit(0);
 		}
 	}
@@ -131,17 +149,21 @@ public class MultiRoundReader extends Reader {
 	private void handleStatusRead(Message message) {
 		
 		
-		if (message.msgType == MultiRoundReader.MSG_TIMER_READ) { 
+		if (message.msgType == RandomPlusReader.MSG_TIMER_READ) { 
 			
 			if (isRedundant()) { 
-				changeStatus(MultiRoundReader.STAT_TERMINATE);
+				if (D) { 
+					log.printf("*** reader %d is found redundant and will terminate \n",
+							this.id);
+				}
+				changeStatus(RandomPlusReader.STAT_TERMINATE);
 			} else { 
 				startRound();
 			}
 			
 		} else { 
-			log.printf("Error: Message type %s is not accepted " +
-					"at STATE_READ \n", message.msgType); 
+			log.printf("error at reader %d: message type %s is not accepted " +
+					"at STATE_READ \n", this.id, message.msgType); 
 			System.exit(0);
 		}
 		
@@ -157,7 +179,7 @@ public class MultiRoundReader extends Reader {
 		
 		// TODO: how to implement the read operation ?
 		
-		if (message.msgType == MultiRoundReader.MSG_TIMER_WRITE) { 
+		if (message.msgType == RandomPlusReader.MSG_TIMER_WRITE) { 
 		
 		for (int i = 0; i < neighborsTags.size(); i++) { 
 			TagContent tc = (TagContent) this.sim.readTag(neighborsTags.get(i));
@@ -170,10 +192,10 @@ public class MultiRoundReader extends Reader {
 
 		} else { 
 			
-			log.printf("Error at Reader %d: Message type %s " +
-					"received from %d is not accepted " +
-					"at STATE_WRITE \n", this.id, 
-					message.msgType, message.senderId); 
+			log.printf("error at reader %d: message type (%s) (rid:%d) " +
+					"cannot be received " +
+					"at STATE_WRITE \n", this.id, message.receiverId, 
+					message.msgType); 
 			System.exit(0);
 			
 		}
@@ -205,8 +227,8 @@ public class MultiRoundReader extends Reader {
 		// If yes. Go to terminate. 
 		// Otherwise. StartRound again. 
 		 scheduleTimer(this.msgDelay(), 
-					MultiRoundReader.MSG_TIMER_READ); 
-			 changeStatus(MultiRoundReader.STAT_READ);
+					RandomPlusReader.MSG_TIMER_READ); 
+			 changeStatus(RandomPlusReader.STAT_READ);
 		
 		
 	}
@@ -226,7 +248,8 @@ public class MultiRoundReader extends Reader {
 			
 			initProtocol();
 		}  else { 
-			log.printf("Error: cannot receive an init message in IDLE");
+			log.printf("error at reader %d: cannot receive message type (%s) in %s", 
+					message.msgType, status);
 			System.exit(0);
 		}
 		
@@ -237,16 +260,16 @@ public class MultiRoundReader extends Reader {
 
 	@Override
 	public boolean isValidStatus(String str) {
-		return (str == MultiRoundReader.STAT_IDLE || 
-				str == MultiRoundReader.STAT_WRITE ||
-				str == MultiRoundReader.STAT_READ ||
-				str == MultiRoundReader.STAT_TERMINATE); 
+		return (str == RandomPlusReader.STAT_IDLE || 
+				str == RandomPlusReader.STAT_WRITE ||
+				str == RandomPlusReader.STAT_READ ||
+				str == RandomPlusReader.STAT_TERMINATE); 
 	}
 
 
 	@Override
 	public boolean isTerminatedStatus(String str) {
-		return (status == MultiRoundReader.STAT_TERMINATE); 
+		return (status == RandomPlusReader.STAT_TERMINATE); 
 	}
 
 

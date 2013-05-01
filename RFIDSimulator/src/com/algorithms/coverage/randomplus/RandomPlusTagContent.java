@@ -1,21 +1,21 @@
-package com.algorithms.coverage;
+package com.algorithms.coverage.randomplus;
 
 
 
 
 import com.algorithms.coverage.TagContent;
 
-public class MultiRoundTagContent extends TagContent 
-implements Comparable<MultiRoundTagContent>{
+public class RandomPlusTagContent extends TagContent 
+implements Comparable<RandomPlusTagContent>{
 
 	public double rand; 
 
-	public MultiRoundTagContent() { 
+	public RandomPlusTagContent() { 
 		this.id = -1; 
 		this.rand = -1; 
 	}
 
-	public MultiRoundTagContent(int id, double r) { 
+	public RandomPlusTagContent(int id, double r) { 
 		this.id = id; 
 		this.rand = r; 
 
@@ -24,7 +24,7 @@ implements Comparable<MultiRoundTagContent>{
 
 
 	@Override
-	public int compareTo(MultiRoundTagContent o) {
+	public int compareTo(RandomPlusTagContent o) {
 
 		int oid = o.id;
 		double or = o.rand; 
