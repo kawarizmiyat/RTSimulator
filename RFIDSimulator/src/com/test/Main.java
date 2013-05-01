@@ -12,7 +12,7 @@ public class Main  {
 		//System.out.println("program terminates");
 
 		ArrayList< ArrayList<Integer> > g = 
-				GraphExtractor.readFile("test.txt");
+				GraphExtractor.readFile("test2.txt");
 		
 		
 		SimSystem sim = new SimSystem();

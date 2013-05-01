@@ -13,19 +13,27 @@ public class GDEReader extends Reader {
 
 	private static final boolean D = true;
 	
-	private static final String STAT_IDLE = "STAT_IDLE";
+	protected static final String STAT_IDLE = "STAT_IDLE";
 	
-	private static final String STAT_WRITE_1 = "STAT_WRITE_1";
+	protected static final String STAT_FIRST_WRITE = "STAT_FIRST_WRITE";
+	protected static final String STAT_FIRST_READ = "STAT_FIRST_READ";
+	protected static final String STAT_SECOND_WRITE = "STAT_SECOND_WRITE"; 
+	protected static final String STAT_SECOND_READ = "STAT_SECOND_READ"; 
+	protected static final String STAT_MAKE_ROUND_DECISION = "STAT_MAKE_ROUND_DECISION";
+
+/*	
+ 	private static final String STAT_WRITE_1 = "STAT_WRITE_1";
 	private static final String STAT_READ_1 = "STAT_READ_1"; 
 	private static final String STAT_WRITE_2 = "STAT_WRITE_2"; 
 	private static final String STAT_READ_2 = "STAT_READ_2";
-
-	private static final String STAT_TERMINATE = "STAT_TERMINATE";
+	*/
 	
-	protected static final String MSG_TIMER_WRITE_1 = "MSG_TIMER_WRITE_1";
-	protected static final String MSG_TIMER_READ_1 = "MSG_TIMER_READ_1";
-	protected static final String MSG_TIMER_WRITE_2 = "MSG_TIMER_WRITE_2";
-	protected static final String MSG_TIMER_READ_2 = "MSG_TIMER_READ_2";
+	protected static final String STAT_TERMINATE = "STAT_TERMINATE";
+	
+	protected static final String MSG_TIMER_FIRST_READ = "MSG_TIMER_FIRST_READ";
+	protected static final String MSG_TIMER_SECOND_WRITE = "MSG_TIMER_SECOND_WRITE";
+	protected static final String MSG_TIMER_SECOND_READ = "MSG_TIMER_SECOND_READ";
+	protected static final String MSG_TIMER_MAKE_ROUND_DECISION = "MSG_TIMER_MAKE_ROUND_DECISION";
 
 	protected static final String MSG_OVERWRITE = "MSG_OVERWRITE";
 	protected static final String MSG_DEACTIVATE = "MSG_DEACTIVATE";
@@ -43,8 +51,6 @@ public class GDEReader extends Reader {
 		
 		activeTags = new ArrayList<Integer>(); 
 
-		
-		maxIterations = 2; 
 		round = 0;
 		
 	}
@@ -56,11 +62,21 @@ public class GDEReader extends Reader {
 		for (int i = 0; i < neighborsTags.size();i++) { 
 			activeTags.add(neighborsTags.get(i));
 		}
-		startRound();
+		
+		goToStatusMakeDecision();
+		
+		//startGDERound();
 	}
 
-	private void startRound() {
+	private void goToStatusMakeDecision() {
+		Message m  = new Message(this.id, this.id, 
+				GDEReader.MSG_TIMER_MAKE_ROUND_DECISION, null, 'r', 'r');
+		handleStatusMakeRoundDecision(m);
+	}
+
+	protected void startGDERound() {
 		
+		changeStatus(GDEReader.STAT_FIRST_WRITE);
 		localMaxima = false;
 		round ++;
 
@@ -98,18 +114,18 @@ public class GDEReader extends Reader {
 		}
 		
 		 scheduleTimer(2* this.msgDelay(), 
-					GDEReader.MSG_TIMER_WRITE_1); 
-			 changeStatus(GDEReader.STAT_WRITE_1);
+					GDEReader.MSG_TIMER_FIRST_READ); 
+			 changeStatus(GDEReader.STAT_FIRST_READ);
 		
 	}
 
 	// It is extactl RREWriteMessage. so why we create a new method.
-	private WriteMessage getWriteMessage() {
+	protected WriteMessage getWriteMessage() {
 		GDEWriteMessage msg = new GDEWriteMessage(this.id, this.activeTags.size(), this.round);
 		return msg;
 	}
 
-	private boolean isActive() {
+	protected boolean isActive() {
 		return (activeTags.size() > 0); 
 	}
 
@@ -143,18 +159,18 @@ public class GDEReader extends Reader {
 			handleStatusIdle(message);
 
 			
-		} else if (status == GDEReader.STAT_WRITE_1) { 
-			handleStatusWrite_1(message);
+		} else if (status == GDEReader.STAT_FIRST_READ) { 
+			handleStatusFirstRead(message);
 			
-		} else if (status == GDEReader.STAT_READ_1) { 
-			handleStatusRead_1(message);
+		} else if (status == GDEReader.STAT_SECOND_WRITE) { 
+			handleStatusSecondWrite(message);
 			
 
-		} else if (status == GDEReader.STAT_WRITE_2) {
-			handleStatusWrite_2(message);
+		} else if (status == GDEReader.STAT_SECOND_READ) {
+			handleStatusSecondRead(message);
 			
-		} else if (status == GDEReader.STAT_READ_2) { 
-			handleStatusRead_2(message);
+		} else if (status == GDEReader.STAT_MAKE_ROUND_DECISION) { 
+			handleStatusMakeRoundDecision(message);
 			
 		} else { 
 			log.printf("error at reader %d: cannot receive message at state %s \n",
@@ -165,9 +181,9 @@ public class GDEReader extends Reader {
 		
 	}
 
-	private void handleStatusWrite_2(Message message) {
+	protected void handleStatusSecondRead(Message message) {
 		
-		if (message.msgType == GDEReader.MSG_TIMER_WRITE_2) { 
+		if (message.msgType == GDEReader.MSG_TIMER_SECOND_READ) { 
 			
 			// read all active neighbor tags. 
 			// if deactivated, remove them from active tags. 
@@ -207,8 +223,8 @@ public class GDEReader extends Reader {
 			}
 			
 			 scheduleTimer(this.msgDelay(), 
-						GDEReader.MSG_TIMER_READ_2); 
-			 changeStatus(GDEReader.STAT_READ_2);
+						GDEReader.MSG_TIMER_MAKE_ROUND_DECISION); 
+			 changeStatus(GDEReader.STAT_MAKE_ROUND_DECISION);
 			
 			
 		} else { 
@@ -242,20 +258,27 @@ public class GDEReader extends Reader {
 			System.exit(0);
 		}
 		
-		int bef = list.size(); 
 		list.remove(index);
-		int aft = list.size(); 
-		
-		if (bef == aft) { 
-			log.printf("there is a problem here !");
-			System.exit(0);
-		}
+
 		
 	}
 
-	private void handleStatusRead_2(Message message) {
+	
+	// TODO: 
+	// We can make few modifications (see below) to make it work for LimitedGDE. 
+	// LimitedGDE should be a subclass of GDEReader. 
+	// LimitedGDE however should implements this function differently. It will be given the
+	// priority in the excution.
+	protected void handleStatusMakeRoundDecision(Message message) {
 		
-		if (message.msgType == GDEReader.MSG_TIMER_READ_2) { 
+		if (status != GDEReader.STAT_MAKE_ROUND_DECISION && status != GDEReader.STAT_IDLE ) { 
+			log.printf("error at reader %d, cannot run handleStatusMakeRoundDecision at status %s \n", 
+					this.id, status); 
+			System.exit(0);
+		}
+		
+		
+		if (message.msgType == GDEReader.MSG_TIMER_MAKE_ROUND_DECISION) { 
 			
 			if (! isActive()) { 
 				if (D) { 
@@ -264,7 +287,16 @@ public class GDEReader extends Reader {
 				}
 				changeStatus(GDEReader.STAT_TERMINATE);
 			} else { 
-				startRound();
+				
+				// TODO: this where we should make changes to 
+				// LIMITEDGDE. We check if the current round is the last.
+				// If this is the case, then we execute RRE. Otherwise, 
+				// we do startGDERound. 
+				
+				// However, this implementation will lead to at least 
+				// one GDE round. 
+				
+				startGDERound();
 			}
 			
 		} else { 
@@ -279,10 +311,12 @@ public class GDEReader extends Reader {
 		
 	}
 
+
+
 	// TODO: It is better to change the name of this state ! -- same for Write_2
-	private void handleStatusWrite_1(Message message) {
+	protected void handleStatusFirstRead(Message message) {
 		
-		if (message.msgType == GDEReader.MSG_TIMER_WRITE_1) { 
+		if (message.msgType == GDEReader.MSG_TIMER_FIRST_READ) { 
 			
 			// Check if you are an owner of all your active neighbors tags. 
 			// if yes, check a global variable called localMaxima to true. 
@@ -311,8 +345,8 @@ public class GDEReader extends Reader {
 			}
 			
 			 scheduleTimer(this.msgDelay(), 
-						GDEReader.MSG_TIMER_READ_1); 
-			 changeStatus(GDEReader.STAT_READ_1);
+						GDEReader.MSG_TIMER_SECOND_WRITE); 
+			 changeStatus(GDEReader.STAT_SECOND_WRITE);
 			
 		} else { 
 			log.printf("error at reader %d: message type (%s) (rid:%d) " +
@@ -324,9 +358,9 @@ public class GDEReader extends Reader {
 		
 	}
 
-	private void handleStatusRead_1(Message message) {
+	protected void handleStatusSecondWrite(Message message) {
 
-		if (message.msgType == GDEReader.MSG_TIMER_READ_1) { 
+		if (message.msgType == GDEReader.MSG_TIMER_SECOND_WRITE) { 
 		
 			if (localMaxima) { 
 				
@@ -355,8 +389,8 @@ public class GDEReader extends Reader {
 			}
 
 			 scheduleTimer(2* this.msgDelay(), 
-						GDEReader.MSG_TIMER_WRITE_2); 
-			 changeStatus(GDEReader.STAT_WRITE_2);
+						GDEReader.MSG_TIMER_SECOND_READ); 
+			 changeStatus(GDEReader.STAT_SECOND_READ);
 			 
 			
 		} else { 
@@ -368,7 +402,7 @@ public class GDEReader extends Reader {
 		}
 	}
 
-	private void handleStatusIdle(Message message) {
+	protected void handleStatusIdle(Message message) {
 		
 		if (message.msgType == Reader.MSG_INIT) { 
 			
@@ -384,10 +418,10 @@ public class GDEReader extends Reader {
 	@Override
 	public boolean isValidStatus(String str) {
 		return (str == GDEReader.STAT_IDLE || 
-				str == GDEReader.STAT_WRITE_1 ||
-				str == GDEReader.STAT_READ_1 ||
-				str == GDEReader.STAT_WRITE_2 ||
-				str == GDEReader.STAT_READ_2 ||
+				str == GDEReader.STAT_FIRST_READ ||
+				str == GDEReader.STAT_SECOND_WRITE ||
+				str == GDEReader.STAT_SECOND_READ ||
+				str == GDEReader.STAT_MAKE_ROUND_DECISION ||
 				str == GDEReader.STAT_TERMINATE); 
 	}
 
