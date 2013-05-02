@@ -5,12 +5,11 @@ import java.util.ArrayList;
 
 import com.algorithms.coverage.Message;
 import com.algorithms.coverage.Reader;
-import com.algorithms.coverage.SingleRoundReader;
-import com.algorithms.coverage.OverWriteTag;
 import com.algorithms.coverage.Tag;
 import com.algorithms.coverage.TagContent;
 import com.algorithms.coverage.gde.GDEReader;
 import com.algorithms.coverage.gde.GDETag;
+import com.algorithms.coverage.gde.LimitedGDEReader;
 import com.algorithms.coverage.leo.LeoReader;
 import com.algorithms.coverage.leo.LeoTag;
 import com.algorithms.coverage.random.RandomReader;
@@ -379,6 +378,16 @@ public class SimSystem  {
 					tagsTable.add(new GDETag(i));
 				}
 				
+			} else if (algorithm.equals("limitedGDE")) { 
+				
+				for (int i = 0; i < readersSize; i++) { 
+					readersTable.add(new LimitedGDEReader(this, i, maxIterations)); 
+				}
+				
+				for (int i = 0; i < tagsSize; i++) { 
+					tagsTable.add(new GDETag(i));
+				}
+				
 			} else { 
 				System.out.printf("Error: cannot initiate, " +
 						"algorithm %s is not recognized \n", algorithm);
@@ -391,6 +400,12 @@ public class SimSystem  {
 			initReaders = true;
 		}
 
+	}
+
+
+
+	public void setMaxIterations(int i) {
+		this.maxIterations = i; 
 	}
 
 }

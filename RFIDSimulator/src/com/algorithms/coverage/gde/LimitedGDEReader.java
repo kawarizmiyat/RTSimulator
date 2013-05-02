@@ -17,7 +17,6 @@ public class LimitedGDEReader extends GDEReader {
 	private static final String STAT_RRE_WRITE = "STAT_RRE_WRITE";
 	private static final String STAT_RRE_READ = "STAT_RRE_READ";
 	private static final String STAT_PREPARE_TERMINATION = "STAT_PREPARE_TERMINATION";
-
 	
 	private static final String MSG_TIMER_RRE_READ = "MSG_TIMER_RRE_READ";
 	private static final String MSG_PREPARE_TERMINATION = "MSG_PREPARE_TERMINATION";
@@ -195,6 +194,11 @@ public class LimitedGDEReader extends GDEReader {
 		
 		if (message.msgType == LimitedGDEReader.MSG_TIMER_RRE_READ) { 
 			
+			if (D) { 
+				log.printf("reader %d reads all its neighbor active tags" +
+						" to check if it owns any of them \n", this.id);
+			}
+			
 			// for every active tag, read the content of the tag. 
 			// own it if necessary. 
 			for (int i = 0; i < activeTags.size(); i++ ) { 
@@ -217,4 +221,20 @@ public class LimitedGDEReader extends GDEReader {
 	}
 
 
+	public boolean isValidStatus(String str) {
+		
+		
+		return (str == GDEReader.STAT_IDLE || 
+				str == GDEReader.STAT_FIRST_READ ||
+				str == GDEReader.STAT_FIRST_WRITE ||
+				str == GDEReader.STAT_SECOND_WRITE ||
+				str == GDEReader.STAT_SECOND_READ ||
+				str == GDEReader.STAT_MAKE_ROUND_DECISION ||
+				str == GDEReader.STAT_TERMINATE || 
+				str == LimitedGDEReader.STAT_PREPARE_TERMINATION ||
+				str == LimitedGDEReader.STAT_RRE_READ || 
+				str == LimitedGDEReader.STAT_RRE_WRITE ); 
+	}
+	
+	
 }

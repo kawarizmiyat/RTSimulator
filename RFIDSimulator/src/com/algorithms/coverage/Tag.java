@@ -8,6 +8,9 @@ import com.simulator.EventType;
 
 public abstract class Tag {
 
+
+	
+	public TagContent tagContent;
 	public int id, numReads, numOverWrites;
 	public ArrayList<Integer> neighborsReaders;
 	public final static char myType = 't';
@@ -29,7 +32,6 @@ public abstract class Tag {
 	}
 	
 	public abstract void handleReceivedMessage(Message message);
-	public abstract TagContent readTag();
 
 
 	public void handleEvent(Event e) {
@@ -53,6 +55,11 @@ public abstract class Tag {
 		}
 		
 	}
+
 	
+	public TagContent readTag() {
+		this.numReads ++ ;
+		return tagContent; 
+	}
 	
 }

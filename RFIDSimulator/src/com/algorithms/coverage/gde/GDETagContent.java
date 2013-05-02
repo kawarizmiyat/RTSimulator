@@ -1,7 +1,6 @@
 package com.algorithms.coverage.gde;
 
 import com.algorithms.coverage.TagContent;
-import com.algorithms.coverage.rre.RRETagContent;
 
 public class GDETagContent extends TagContent implements Comparable<GDETagContent> {
 

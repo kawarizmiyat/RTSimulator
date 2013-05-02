@@ -417,7 +417,11 @@ public class GDEReader extends Reader {
 
 	@Override
 	public boolean isValidStatus(String str) {
+		
+
+		
 		return (str == GDEReader.STAT_IDLE || 
+				str == GDEReader.STAT_FIRST_WRITE ||
 				str == GDEReader.STAT_FIRST_READ ||
 				str == GDEReader.STAT_SECOND_WRITE ||
 				str == GDEReader.STAT_SECOND_READ ||

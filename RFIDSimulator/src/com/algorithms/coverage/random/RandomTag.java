@@ -2,15 +2,12 @@ package com.algorithms.coverage.random;
 
 import com.algorithms.coverage.Message;
 import com.algorithms.coverage.OverWriteTag;
-import com.algorithms.coverage.randomplus.RandomPlusTagContent;
-import com.algorithms.coverage.rre.RRETagContent;
-import com.algorithms.coverage.rre.RREWriteMessage;
 
 public class RandomTag extends OverWriteTag {
 
 	public RandomTag(int id) {
 		super(id);
-		tc = new RandomTagContent();
+		tagContent = new RandomTagContent();
 	}
 
 	@Override
@@ -24,16 +21,16 @@ public class RandomTag extends OverWriteTag {
 		if (D) { 
 			log.printf("tag %d at overwrite, orig value: (%f,%d), " +
 					"to be written: (%f, %d) \n", this.id, 
-					((RandomTagContent) tc).rand, 
-					((RandomTagContent) tc).id, 
+					((RandomTagContent) tagContent).rand, 
+					((RandomTagContent) tagContent).id, 
 					temp.rand, temp.id);
 		}
 		
 		
-		if (((RandomTagContent) tc).compareTo(temp) < 0) { 
+		if (((RandomTagContent) tagContent).compareTo(temp) < 0) { 
 			
-			((RandomTagContent) tc).id = temp.id; 
-			((RandomTagContent) tc).rand = temp.rand; 
+			((RandomTagContent) tagContent).id = temp.id; 
+			((RandomTagContent) tagContent).rand = temp.rand; 
 			numOverWrites ++;
 			
 			if (D) { 

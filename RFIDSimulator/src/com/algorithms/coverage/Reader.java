@@ -163,6 +163,11 @@ public abstract class Reader {
 	}
 	
 	protected void changeStatus(String str) {
+		
+		if (D) { 
+			log.printf("at change status to %s \n", str);
+		}
+		
 		if (isValidStatus(str)) { 
 			
 			if (D) { 
@@ -178,7 +183,8 @@ public abstract class Reader {
 			}
 		} else { 
 			log.printf("error at reader %d: " +
-					"status is not accepted \n", this.id);
+					"status %s is not a valid state \n", this.id, str);
+			System.exit(0);
 		}
  	}
 

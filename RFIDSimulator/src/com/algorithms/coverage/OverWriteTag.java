@@ -1,11 +1,8 @@
 package com.algorithms.coverage;
 
-import com.simulator.Event;
-import com.simulator.EventType;
-
 public abstract class OverWriteTag extends Tag {
 
-	public TagContent tc;
+
 	protected boolean D = true;
 	
 	public OverWriteTag(int id) {
@@ -13,11 +10,6 @@ public abstract class OverWriteTag extends Tag {
 
 	}
 
-	public TagContent readTag() {
-		this.numReads ++ ;
-		return tc; 
-	}
-	
 	@Override
 	public void handleReceivedMessage(Message message) {
 

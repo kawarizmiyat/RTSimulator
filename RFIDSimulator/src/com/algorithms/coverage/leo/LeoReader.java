@@ -2,7 +2,6 @@ package com.algorithms.coverage.leo;
 
 import com.algorithms.coverage.SingleRoundReader;
 import com.algorithms.coverage.WriteMessage;
-import com.algorithms.coverage.random.RandomWriteMessage;
 import com.simulator.SimSystem;
 
 public class LeoReader extends SingleRoundReader {

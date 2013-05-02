@@ -16,7 +16,8 @@ public class Main  {
 		
 		
 		SimSystem sim = new SimSystem();
-		sim.setRTGraph("gde", g);
+		sim.setMaxIterations(2);
+		sim.setRTGraph("limitedGDE", g);
 		sim.run();
 		
 	}

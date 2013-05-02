@@ -1,12 +1,8 @@
 package com.algorithms.coverage.gde;
 
 import com.algorithms.coverage.Message;
-import com.algorithms.coverage.SingleRoundReader;
 import com.algorithms.coverage.Tag;
 import com.algorithms.coverage.TagContent;
-import com.algorithms.coverage.rre.RRETagContent;
-import com.algorithms.coverage.rre.RREWriteMessage;
-import com.simulator.Event;
 
 public class GDETag extends Tag {
 

@@ -1,10 +1,6 @@
 package com.algorithms.coverage;
 
-import java.util.ArrayList;
 
-import com.algorithms.coverage.rre.RRETagContent;
-import com.simulator.Event;
-import com.simulator.EventType;
 import com.simulator.SimSystem;
 
 public abstract class SingleRoundReader extends Reader {
