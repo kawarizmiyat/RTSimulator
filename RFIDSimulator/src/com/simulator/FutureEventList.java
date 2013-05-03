@@ -11,7 +11,6 @@ public class FutureEventList {
 	
 	public void enter ( Event e ){
 		
-		System.out.println("Event entered for " + e.time +  " action " + e.action);
 		if ( first == null ){
 			first = new EventNode(e);
 		}

@@ -17,12 +17,18 @@ public class EventQueue {
 		PriorityQueue<Event> pq; 
 		int currentElementId; 
 		
+		private boolean D = false;
+		
 		public EventQueue() { 
 			pq = new PriorityQueue<Event>(); 
 			currentElementId = 0;
 		}
 
 		public void enter(Event e){
+			
+			if (D) { 
+				System.out.printf("a new event entered - scheduled at %f \n", e.time);
+			}
 			
 			e.setId(currentElementId); 
 			e.setRandomBreaker();

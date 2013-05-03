@@ -10,6 +10,8 @@ import com.algorithms.coverage.TagContent;
 import com.algorithms.coverage.gde.GDEReader;
 import com.algorithms.coverage.gde.GDETag;
 import com.algorithms.coverage.gde.LimitedGDEReader;
+import com.algorithms.coverage.gdesi.GDESIReader;
+import com.algorithms.coverage.gdesi.GDESITag;
 import com.algorithms.coverage.leo.LeoReader;
 import com.algorithms.coverage.leo.LeoTag;
 import com.algorithms.coverage.random.RandomReader;
@@ -43,7 +45,7 @@ public class SimSystem  {
 	private ArrayList<Integer> nonRedundantReaders;
 
 
-	private static final boolean D = true; 
+	private static final boolean D = false; 
 	private static final boolean badDebug = false;
 	
 	private final PrintStream log = System.out; 
@@ -110,6 +112,7 @@ public class SimSystem  {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void setupNeighbors() {
 
 		// TODO: 
@@ -220,14 +223,14 @@ public class SimSystem  {
 		for (int i = 0; i < readersTable.size(); i++) { 
 			if (readersTable.get(i).ownedTags.size() > 0) { 
 
-				if (D) { 
+				 
 					log.printf("reader %d is not redundant: ",
 						readersTable.get(i).id);
 					for (int j = 0; j < readersTable.get(i).ownedTags.size(); j++) { 
 						log.printf("%d ", readersTable.get(i).ownedTags.get(j));
 					}
 					log.printf("\n");
-				}
+				
 				nonRedundantReaders.add(readersTable.get(i).id);
 			}
 		}
@@ -388,12 +391,23 @@ public class SimSystem  {
 					tagsTable.add(new GDETag(i));
 				}
 				
+			} else if (algorithm.equals("gdeSi")) {
+				
+				for (int i = 0; i < readersSize; i++) { 
+					readersTable.add(new GDESIReader(this, i)); 
+				}
+				
+				for (int i = 0; i < tagsSize; i++) { 
+					tagsTable.add(new GDESITag(i));
+				}
+				
+				
 			} else { 
 				System.out.printf("Error: cannot initiate, " +
 						"algorithm %s is not recognized \n", algorithm);
 			
 				System.out.println("Accepted algorithms are: " +
-						"rre, random, leo, randomPlus.");
+						"rre, random, leo, randomPlus, dge, limitedGde, gdeSi.");
 				System.exit(0);
 			}
 			

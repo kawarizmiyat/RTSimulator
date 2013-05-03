@@ -19,7 +19,7 @@ public abstract class Reader {
 	// Variables needed to any Event handler in this simulation
 	protected double now;
 	protected PrintStream log = System.out; 
-	private boolean D = true;
+	private boolean D = false;
 	
 	public String status; 
 
@@ -43,6 +43,10 @@ public abstract class Reader {
 	// other type of Readers (e.g. MultiRoundReader).
 	public void handleEvent(Event e) { 
 		
+		if (D) { 
+			log.printf("reader %d handling event at time %f \n", this.id, e.time);
+		}
+		
 		if (e.time < now) { 
 			log.printf("error at reader %d: event in past at handleEvent ",
 					this.id);
@@ -52,6 +56,9 @@ public abstract class Reader {
 		switch (e.action) { 
 		
 		case EventType.MESSAGE: 
+			if (D) { 
+				log.printf("reader %d is goint to handle received message \n", this.id);
+			}
 			handleReceivedMessage(e.message);
 			break ;
 		

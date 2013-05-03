@@ -9,10 +9,11 @@ import com.algorithms.coverage.Reader;
 import com.algorithms.coverage.Tag;
 import com.algorithms.coverage.WriteMessage;
 import com.simulator.SimSystem;
+import com.test.MyUtil;
 
 public class GDESIReader extends Reader {
 
-	private static final boolean D = false;
+	private static final boolean D = true;
 
 	private static final String STAT_IDLE = "STAT_IDLE";
 	private static final String STAT_MAKE_ROUND_DECISION = "STAT_MAKE_ROUND_DECISION";
@@ -34,10 +35,11 @@ public class GDESIReader extends Reader {
 	
 	public GDESIReader(SimSystem sim, int id) {
 		super(sim, id);
-		// TODO Auto-generated constructor stub
 		round = 0;
 		Pv = new ArrayList<Integer>();
 		wvMap = new HashMap<Integer, Integer>();
+		activeTags = new ArrayList<Integer>();
+		changeStatus(GDESIReader.STAT_IDLE);
 	}
 
 	@Override
@@ -76,22 +78,17 @@ public class GDESIReader extends Reader {
 		
 		if (message.msgType == GDESIReader.MSG_TIMER_MAKE_ROUND_DECISION) { 
 			
+			// while reader is active. .. see line 2 in Pseudocode.
 			if (! isActive()) { 
 				if (D) { 
-					log.printf("*** reader %d has all its neighbors tags deactivated and will terminate \n",
-							this.id);
+					log.printf("*** reader %d has all its neighbors tags deactivated and will terminate" +
+							"at round %d \n",
+							this.id, round);
 				}
 				changeStatus(GDESIReader.STAT_TERMINATE);
 			} else { 
 				
-				// TODO: this where we should make changes to 
-				// LIMITEDGDE. We check if the current round is the last.
-				// If this is the case, then we execute RRE. Otherwise, 
-				// we do startGDERound. 
-				
-				// However, this implementation will lead to at least 
-				// one GDE round. 
-				
+			
 				startGDESIRound();
 			}
 			
@@ -109,6 +106,8 @@ public class GDESIReader extends Reader {
 
 	private void startGDESIRound() {
 		
+		
+		// Prepare for the new round. 
 		// Change status and increase the number of rounds. 
 		changeStatus(GDESIReader.STAT_WRITE_ROUND);
 		round ++; 
@@ -122,6 +121,8 @@ public class GDESIReader extends Reader {
 		
 		// initialize the value of count at each round.
 		count = Pv.size();
+		
+		// end preparation.
 		
 		
 		// for debugging:
@@ -179,6 +180,8 @@ public class GDESIReader extends Reader {
 	@Override
 	protected void handleReceivedMessage(Message message) {
 
+
+		
 		if (this.id != message.receiverId) { 
 			log.printf("error at %d: reader %d received message is not destined to" +
 					"the correct destination (%d != %d) \n", 
@@ -186,7 +189,7 @@ public class GDESIReader extends Reader {
 		}
 		
 		
-		if (D) { 
+		if (false) { 
 			
 			if (message.receiverId == message.senderId) { 
 				log.printf("reader %d wakes up with timer %s \n", 
@@ -228,8 +231,19 @@ public class GDESIReader extends Reader {
 
 	private void handleStatusReadRound(Message message) {
 		
+		if (D) { 
+			log.printf("reader %d is handling read round \n", this.id);
+		}
+		
 		if (message.msgType == GDESIReader.MSG_TIMER_READ_ROUND) { 
 			runGDESIReadRound();
+			
+			// schedule event. -- prepare make decision.
+			scheduleTimer(this.msgDelay(), 
+					GDESIReader.MSG_TIMER_MAKE_ROUND_DECISION); 
+			changeStatus(GDESIReader.STAT_MAKE_ROUND_DECISION);
+
+			
 		} else { 
 			log.printf("error at reader %d: cannot receive message type (%s) in %s", 
 					message.msgType, status);
@@ -239,47 +253,141 @@ public class GDESIReader extends Reader {
 	}
 
 
-
+	// TODO: add comments .. a good set of clean comments.
 	private void runGDESIReadRound() {
 		
+		// Note that we want the tags to be read in order. - We assume herein 
+		// that the activeTags are ordered. 
 		for (int i = 0; i < activeTags.size(); i ++ ) { 
+			
+			
 			int t = activeTags.get(i); 
 			GDESITagContent tContent = (GDESITagContent) this.sim.readTag(t);
 			
+			if (D) { 
+				log.printf("reader %d reads tag %d \n", this.id, t);
+			}
+			
+			
+			// vSharp == agreed on owner of tag t. 
 			int vSharp = AG(t, tContent); 
+			
+			if (D) {
+				log.printf("reader %d found that v' is %d (result of AG()  of tag %d \n", 
+						this.id, vSharp, t );
+			}
 			
 			if (vSharp != GDESIReader.NULL_OWNER) { 
 				
+				if (D) { 
+					log.printf("vSharp is not NULL \n");
+				}
+				
 				// update the owner of t according to this.reader
+				// note that this does not mean that this is the final owner of t. 
+				// See the paper for more details.
+
 				updateWVMap(t, vSharp);
+				if (D) { 
+					log.printf("reader %d update the owner of tag %d to v' : %d \n", 
+							this.id, t, vSharp);
+				}
 				
 				// deactivate tag t (remove from activeTags)
 				removeTag(activeTags, t);
-				i -- ;			// note, we decrease i because
-				// the iteration is over ativeTags. 
+				i -- ;			// note, we decrease i because the iteration is over ativeTags. 
 				
-				// remove tag t from pv 
+				if (D) { 
+					log.printf("reader %d deactivates tag %d (remove from activeTag) \n", 
+							this.id, t);
+				}
+				
+				// Remove tag t from pv 
 				removeTag(this.Pv, t); 
+
+				if (D) { 
+					log.printf("reader %d remove tag %d from Pv \n", 
+							this.id, t);
+				}
 				
-				// TODO: define count and initialize it in each 
-				// beginning of a round to activeTags.size();
+				
+				// decrement count by 1. (this is for the Pv size). 
+				// You should note that for each decrementing of this.Pv, count is decreased by 1. 
+				// initially count == this.Pv.size() [see startGDESIRound()].. 
+				// Therefore, you must make sure that count == this.Pv.Size all the time.
 				count --; 
+				
+				if (D) {
+					log.printf("reader %d decreases count to %d \n", this.id, count );
+				}
 				
 				
 				// own tag if vSharp is yourself.
 				if (this.id == vSharp) { 
+					
 					this.ownTag(t);
+					
+					if (D) { 
+						log.printf("reader %d owns tag %d \n", this.id, t);
+					}
 				}
 				
 			} else { 
-				vSharp = tContent.findMax();	// what does this functino do ?
-				updateWVMap(t, vSharp);
+				vSharp = findMax(t, tContent);	// find max. 
+				
+				if (D) { 
+					log.printf("reader %d found %d as find max of tag %d \n", 
+							this.id, vSharp, t);
+				}
+				
+				updateWVMap(t, vSharp); 		// update the owner of tag t to v'. 
+				
+				if (D) { 
+					log.printf("reader %d updates owner of tag %d  to %d \n",
+							this.id, t, vSharp);
+				}
 				
 				if (vSharp != this.id) { 
+				
+
 					// for each tag t' shared between vsharp and v in M(t), 
 					// do: 
 					// Pv = Pv - t', 
 					// count --;
+					// end for. 
+					
+					ArrayList<Integer> st = sharedTags(tContent, this.id, vSharp);
+					
+					if(D) { 
+						log.printf("the shared tags between reader %d and reader %d at tag %d: ", 
+								this.id, vSharp, t);
+						for (int k = 0; k < st.size(); k++) 
+							log.printf("%d ", st.get(k));
+						log.printf("\n");
+						log.printf("where the content of tag %d is: \n", t); 
+						log.println(tContent);
+					}
+					
+					int sizeBefore = this.Pv.size();
+					ArrayList<Integer> res = MyUtil.setDifference(this.Pv, st);
+					this.Pv.clear(); 
+					this.Pv.addAll(res);
+					
+					if (D) { 
+						log.printf("reader %d updated the set Pv to: ", this.id);
+						for (int k = 0; k < this.Pv.size(); k++) { 
+							log.printf("%d ", this.Pv.get(k));
+						}
+						log.printf("\n");
+					}
+					
+					int sizeAfter = this.Pv.size();
+					count = count - (sizeBefore - sizeAfter);
+					
+					if (D) {
+						log.printf("reader updated the count to %d \n", count);
+					}
+
 				}
 				
 			}
@@ -290,6 +398,57 @@ public class GDESIReader extends Reader {
 
 
 
+	private int findMax(int t, GDESITagContent tContent) {
+		
+		GDESITagValue mine = new GDESITagValue(this.count, this.id);
+		
+		ArrayList<GDESITagValue> allVs = new ArrayList<GDESITagValue>(); 
+		
+		for (Map.Entry<Integer, GDESITagStruct> entry: tContent.table.entrySet()) { 
+			
+			GDESITagStruct e = entry.getValue();
+			if (e.id != this.id) { 
+				allVs.add(new GDESITagValue(e.pv.size(), e.id )); 
+			}
+			
+		}
+		
+		
+		log.printf("at findMax "); 
+		
+		GDESITagValue max = mine; 
+		
+		log.println("max = mine = " + max); 
+		for (int i = 0; i < allVs.size(); i++) { 
+			log.println("checking: " + allVs.get(i));
+			if (max.compareTo(allVs.get(i)) < 0) { 
+			
+				max = allVs.get(i);
+			}
+		}
+		
+		if (D) { 
+			log.printf("reader %d finds max that max tag %d is reader %d \n", this.id, t, max.id);
+		}
+		
+		return max.id; 
+	}
+
+	private ArrayList<Integer> sharedTags(GDESITagContent tContent, int v,
+			int vs) {
+
+		
+		ArrayList<Integer> vPv = tContent.table.get(v).pv; 
+		ArrayList<Integer> vsPv = tContent.table.get(vs).pv; 
+		
+		ArrayList<Integer> result = MyUtil.interesect(vPv, vsPv);
+		return result;
+		
+		
+		
+	}
+
+	
 	private void removeTag(ArrayList<Integer> list, Integer id) {
 		if (list.size() == 0) { 
 			log.printf("warning: the list in removeTag is empty ! \n");
@@ -322,7 +481,7 @@ public class GDESIReader extends Reader {
 		} else { 
 			
 			if (D) { 
-				log.printf("reader %d updates the owner of tag %d with %d", 
+				log.printf("reader %d updates the owner of tag %d with %d \n", 
 						this.id, t, vSharp );
 			}
 			wvMap.put(t, vSharp);
@@ -350,11 +509,12 @@ public class GDESIReader extends Reader {
 				return GDESIReader.NULL_OWNER;
 			}
 			
-			// if one of the value is different. 
+			// or: if one of the value is different. 
 			if (entry.getValue().wv != lastWv && lastWv != GDESIReader.NULL_OWNER) {
 				return GDESIReader.NULL_OWNER;
 			}
 			
+			// change the value of the first time you see a non-null.
 			if (lastWv == GDESIReader.NULL_OWNER && 
 					entry.getValue().wv != GDESIReader.NULL_OWNER ) { 
 				
@@ -394,7 +554,7 @@ public class GDESIReader extends Reader {
 
 	@Override
 	public boolean isTerminatedStatus(String str) {
-		// TODO Auto-generated method stub
+
 		return (str == GDESIReader.STAT_TERMINATE);
 	}
 

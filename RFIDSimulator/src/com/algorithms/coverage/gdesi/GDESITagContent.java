@@ -2,6 +2,7 @@ package com.algorithms.coverage.gdesi;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.algorithms.coverage.TagContent;
 
@@ -39,31 +40,32 @@ public class GDESITagContent extends TagContent {
 		table.put(id, t); 
 		
 		
-		// TODO: test me please ! 
-		if (maxIdPvSize < pv.size() || 
-				(maxIdPvSize == pv.size() && id > maxId) ) { 
-			maxId = id; 
-			maxIdPvSize = pv.size();
-			
-			
-			if (D) { 
-				log.printf("** update maximum id at the current tag" +
-						"(need to be tested) \n");
-			}
-		}
+//		// TODO: test me please ! 
+//		if (maxIdPvSize < pv.size() || 
+//				(maxIdPvSize == pv.size() && id > maxId) ) { 
+//			maxId = id; 
+//			maxIdPvSize = pv.size();
+//			
+//			//
+//			//if (D) { 
+//			//	log.printf("** update maximum id at the current tag" +
+//			//			" to %d \n", maxId);
+//			//}
+//		}
 		
 		currentRound = round;
 		
 	}
 
 
-	public int findMax() {
-		// find the maximum value inside this tag. 
-		// the comparison value is (Pv.size(), id);
-		
-		return maxId; 
-		
+	public String toString() { 
+		String s = "";
+		for (Map.Entry<Integer, GDESITagStruct> entry : this.table.entrySet()) { 
+			s += entry.getKey() + " " + entry.getValue() + " \n";
+		}
+		return s; 
 	}
+	
 	
 }
 
@@ -90,4 +92,14 @@ class GDESITagStruct {
 			this.pv.add(pv.get(i));
 		}
 	}
+	
+	public String toString() { 
+		String s = "id: " + id + " , pvs: { "; 
+		for (int i = 0; i < pv.size() ; i++) { 
+			s += pv.get(i) + " "; 
+		}
+		s += "}, wv: " + wv + " r: " + round + " "; 
+		return s;
+	}
+	
 }

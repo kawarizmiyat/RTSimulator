@@ -7,7 +7,7 @@ public class GDESITag extends Tag {
 
 	public GDESITag(int id) {
 		super(id);
-
+		tagContent = new GDESITagContent();
 	}
 
 	@Override
@@ -25,6 +25,8 @@ public class GDESITag extends Tag {
 
 	private void append(Message message) {
 		
+		
+		this.numOverWrites ++; 
 		GDESIWriteMessage m = (GDESIWriteMessage) message.msgContent; 
 		
 		
@@ -33,6 +35,13 @@ public class GDESITag extends Tag {
 		}
 
 		((GDESITagContent) tagContent).add(m.id, m.pv, m.wv, m.round); 
+		
+		if (D) { 
+			log.printf("new tag %d content: ", this.id);
+			log.print(tagContent); 
+			log.printf("\n");
+			
+		}
 		
 	}
 

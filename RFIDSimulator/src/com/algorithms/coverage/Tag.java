@@ -17,7 +17,7 @@ public abstract class Tag {
 	
 	protected double now;
 	protected PrintStream log = System.out; 
-	protected boolean D = true;
+	protected boolean D = false;
 	
 	public Tag(int id) { 
 
