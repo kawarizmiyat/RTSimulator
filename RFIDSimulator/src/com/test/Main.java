@@ -12,11 +12,11 @@ public class Main  {
 		//System.out.println("program terminates");
 
 		ArrayList< ArrayList<Integer> > g = 
-				GraphExtractor.readFile("test.txt");
+				GraphExtractor.readFile("scen_5");
 		
 		
 		SimSystem sim = new SimSystem();
-		sim.setMaxIterations(2);
+		sim.setMaxIterations(3);
 		sim.setRTGraph("gdeSi", g);
 		sim.run();
 		

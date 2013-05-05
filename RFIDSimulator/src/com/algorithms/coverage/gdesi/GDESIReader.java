@@ -8,8 +8,8 @@ import com.algorithms.coverage.Message;
 import com.algorithms.coverage.Reader;
 import com.algorithms.coverage.Tag;
 import com.algorithms.coverage.WriteMessage;
+import com.simulator.MyUtil;
 import com.simulator.SimSystem;
-import com.test.MyUtil;
 
 public class GDESIReader extends Reader {
 
@@ -452,7 +452,8 @@ public class GDESIReader extends Reader {
 	private void removeTag(ArrayList<Integer> list, Integer id) {
 		if (list.size() == 0) { 
 			log.printf("warning: the list in removeTag is empty ! \n");
-			System.exit(0);				
+			// System.exit(0);
+			return; 
 		}
 		
 		int index = -1; 

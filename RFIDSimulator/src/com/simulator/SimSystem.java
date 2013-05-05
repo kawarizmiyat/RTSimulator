@@ -30,7 +30,7 @@ public class SimSystem  {
 	public EventQueue future;
 
 	// for keeping statistics
-	private final double END = 20; // marks the end of the simulation period
+	private final double END = 200; // marks the end of the simulation period
 
 	
 	private final int MAX_ITERATIONS = 2; 
@@ -407,7 +407,7 @@ public class SimSystem  {
 						"algorithm %s is not recognized \n", algorithm);
 			
 				System.out.println("Accepted algorithms are: " +
-						"rre, random, leo, randomPlus, dge, limitedGde, gdeSi.");
+						"rre, random, leo, randomPlus, dge, limitedGDE, gdeSi.");
 				System.exit(0);
 			}
 			
