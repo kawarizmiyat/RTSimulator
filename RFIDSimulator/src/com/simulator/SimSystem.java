@@ -20,6 +20,7 @@ import com.algorithms.coverage.randomplus.MinMaxReader;
 import com.algorithms.coverage.randomplus.MinMaxTag;
 import com.algorithms.coverage.randomplus.RandomPlusReader;
 import com.algorithms.coverage.randomplus.RandomPlusTag;
+import com.algorithms.coverage.randomplus.SimpleRandomPlusReader;
 import com.algorithms.coverage.rre.DRREReader;
 import com.algorithms.coverage.rre.RREReader;
 import com.algorithms.coverage.rre.RRETag;
@@ -365,7 +366,7 @@ public class SimSystem  {
 				for (int i = 0; i < readersSize; i++) { 
 					
 					readersTable.add(
-							new RandomPlusReader(
+							new SimpleRandomPlusReader(
 									this, i, maxIterations)
 							);
 				}

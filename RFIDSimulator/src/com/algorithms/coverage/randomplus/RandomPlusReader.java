@@ -10,7 +10,7 @@ import com.algorithms.coverage.WriteMessage;
 import com.algorithms.coverage.random.RandomWriteMessage;
 import com.simulator.SimSystem;
 
-public class RandomPlusReader extends Reader {
+public abstract class RandomPlusReader extends Reader {
 
 	public boolean active; 
 	public int round; 
@@ -28,7 +28,7 @@ public class RandomPlusReader extends Reader {
 	
 	protected static final String MSG_TIMER_WRITE = "MSG_TIMER_WRITE";
 	protected static final String MSG_TIMER_READ = "MSG_TIMER_READ";
-	protected static final String MSG_OVERWRITE = "MSG_OVERWRITE";
+	public static final String MSG_OVERWRITE = "MSG_OVERWRITE";
 	
 	public RandomPlusReader(SimSystem sim, int id, int maxIt) {
 		super(sim, id);
@@ -99,10 +99,11 @@ public class RandomPlusReader extends Reader {
 	}
 
 
-	private WriteMessage getWriteMessage() {
-		RandomWriteMessage msg = new RandomWriteMessage(this.id, this.rand);
-		return msg;
-	}
+	protected abstract WriteMessage getWriteMessage();
+	 // {
+//		RandomWriteMessage msg = new RandomWriteMessage(this.id, this.rand);
+//		return msg;
+//	}
 
 
 	@Override

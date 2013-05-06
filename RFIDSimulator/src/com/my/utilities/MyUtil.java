@@ -1,4 +1,4 @@
-package com.simulator;
+package com.my.utilities;
 
 import java.util.ArrayList;
 

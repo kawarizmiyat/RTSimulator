@@ -12,12 +12,12 @@ public class Main  {
 		//System.out.println("program terminates");
 
 		ArrayList< ArrayList<Integer> > g = 
-				GraphExtractor.readFile("Files/scen_5");
+				GraphExtractor.readFile("Files/scen_1");
 		
 		
 		SimSystem sim = new SimSystem();
 		sim.setMaxIterations(3);
-		sim.setRTGraph("gdeSi", g);
+		sim.setRTGraph("drre", g);
 		sim.run();
 		
 //		ArrayList<Integer> f = g.get(0); 

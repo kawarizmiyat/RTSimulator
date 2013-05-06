@@ -8,7 +8,7 @@ import com.algorithms.coverage.Message;
 import com.algorithms.coverage.Reader;
 import com.algorithms.coverage.Tag;
 import com.algorithms.coverage.WriteMessage;
-import com.simulator.MyUtil;
+import com.my.utilities.MyUtil;
 import com.simulator.SimSystem;
 
 public class GDESIReader extends Reader {
