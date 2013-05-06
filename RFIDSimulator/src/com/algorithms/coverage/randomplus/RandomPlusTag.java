@@ -1,44 +1,23 @@
 package com.algorithms.coverage.randomplus;
 
 import com.algorithms.coverage.Message;
-import com.algorithms.coverage.Tag;
+import com.algorithms.coverage.OverWriteTag;
 import com.algorithms.coverage.TagContent;
 import com.algorithms.coverage.random.RandomWriteMessage;
-import com.simulator.Event;
-import com.simulator.EventType;
-
-public class RandomPlusTag extends Tag {
 
 
-	public TagContent tc;
+
+public class RandomPlusTag extends OverWriteTag {
+
+
+	// public TagContent tc;
 	protected boolean D = true;
 	
 	public RandomPlusTag(int id) {
 		super(id);
-		tc = new RandomPlusTagContent();
-
+		tagContent = new RandomPlusTagContent();
 	}
 
-	public TagContent readTag() {
-		this.numReads ++ ;
-		return tc; 
-	}
-	
-	@Override
-	public void handleReceivedMessage(Message message) {
-
-		if (message.msgType == RandomPlusReader.MSG_OVERWRITE) { 
-			overWrite(message); 
-		
-		} else { 
-			log.printf("error at tag %d: unrecognized received message (t: %s) \n", 
-					this.id, message.msgType);
-			System.exit(0);
-		}
-		
-	}
-
-	// abstract function  TODO: make it abstract 
 	protected void overWrite(Message msg) { 
 		
 		// It is ok to use RandomWriteMessage for the time been.
@@ -52,16 +31,16 @@ public class RandomPlusTag extends Tag {
 		if (D) { 
 			log.printf("tag %d at overwrite, orig value: (%f,%d), " +
 					"to be written: (%f, %d) \n", this.id, 
-					((RandomPlusTagContent) tc).rand, 
-					((RandomPlusTagContent) tc).id, 
+					((RandomPlusTagContent) tagContent).rand, 
+					((RandomPlusTagContent) tagContent).id, 
 					temp.rand, temp.id);
 		}
 
 		
-		if (((RandomPlusTagContent) tc).compareTo(temp) < 0) { 
+		if (((RandomPlusTagContent) tagContent).compareTo(temp) < 0) { 
 			
-			((RandomPlusTagContent) tc).id = temp.id; 
-			((RandomPlusTagContent) tc).rand = temp.rand; 
+			((RandomPlusTagContent) tagContent).id = temp.id; 
+			((RandomPlusTagContent) tagContent).rand = temp.rand; 
 			numOverWrites ++;
 			
 			if (D) { 
@@ -73,31 +52,5 @@ public class RandomPlusTag extends Tag {
 
 
 	}
-	
-	@Override
-	public void handleEvent(Event e) {
-
-		// There is no need to debug this. 
-		// if (D) { 
-		//	log.printf("tag %d handles a new event at %f \n", 
-		//			this.id, e.time);
-		// }
-		
-		now = e.time; 
-		switch (e.action) { 
-		
-		case EventType.MESSAGE: 
-			handleReceivedMessage(e.message);
-			break ;
-		
-		default: 
-			log.printf("error at tag %d: only messages are allowed in handleEvent");
-			System.exit(0);
-			break; 
-		}
-		
-	}
-
-
 
 }

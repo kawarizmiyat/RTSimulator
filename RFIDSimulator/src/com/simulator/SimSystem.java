@@ -16,8 +16,11 @@ import com.algorithms.coverage.leo.LeoReader;
 import com.algorithms.coverage.leo.LeoTag;
 import com.algorithms.coverage.random.RandomReader;
 import com.algorithms.coverage.random.RandomTag;
+import com.algorithms.coverage.randomplus.MinMaxReader;
+import com.algorithms.coverage.randomplus.MinMaxTag;
 import com.algorithms.coverage.randomplus.RandomPlusReader;
 import com.algorithms.coverage.randomplus.RandomPlusTag;
+import com.algorithms.coverage.rre.DRREReader;
 import com.algorithms.coverage.rre.RREReader;
 import com.algorithms.coverage.rre.RRETag;
 
@@ -402,12 +405,36 @@ public class SimSystem  {
 				}
 				
 				
+			} else if (algorithm.equals("drre")) { 
+				
+				for (int i = 0; i < readersSize; i++) { 
+					readersTable.add(new DRREReader(this, i)); 
+				}
+				
+				for (int i = 0; i < tagsSize; i++) { 
+					tagsTable.add(new RRETag(i));
+				}
+				
+				
+			} else if (algorithm.equals("minMax")) { 
+				
+				for (int i = 0; i < readersSize; i++) { 
+					readersTable.add(new MinMaxReader(this, i));
+				}
+				
+				
+				for (int i = 0; i < tagsSize; i++) { 
+					tagsTable.add(new MinMaxTag(i));
+				}
+				
+				
 			} else { 
 				System.out.printf("Error: cannot initiate, " +
 						"algorithm %s is not recognized \n", algorithm);
 			
 				System.out.println("Accepted algorithms are: " +
-						"rre, random, leo, randomPlus, dge, limitedGDE, gdeSi.");
+						"rre, random, leo, randomPlus, dge, limitedGDE," +
+						" gdeSi, drre, minMax");
 				System.exit(0);
 			}
 			

@@ -14,14 +14,5 @@ though, for readability.
 
 
  
-1. Implement: LEO, DRRE, and RANDOM.  
-	-- Done: LEO, RANDOM, RRE. -- TODO: DRRE. 
-
-TODO:	
-2. Read files for tags neighborhoods. 
-	-- Done: (still more testing).
-	
-3. Implement GDE
-3.a. Implement GDE-Limited
-4. Implement RANDOM+
-5. Implement GDE-SI
+The algorithm included: 
+RRE, LEO, DRRE, RANDOM, RANDMO+, GDE, GDE-SI, MinMax.

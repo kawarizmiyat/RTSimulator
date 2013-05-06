@@ -15,6 +15,7 @@ public abstract class Reader {
 	public ArrayList<Integer> neighborsReaders;
 	public final static char myType = 'r';
 	public int numNeighborTags; 
+	public int numNeighborReaders;
 	
 	// Variables needed to any Event handler in this simulation
 	protected double now;
@@ -34,6 +35,7 @@ public abstract class Reader {
 		neighborsTags = new ArrayList<Integer>();
 		neighborsReaders = new ArrayList<Integer>();
 		numNeighborTags= 0;
+		numNeighborReaders = 0;
 		ownedTags = new ArrayList<Integer>();
 	}
 	
@@ -162,6 +164,7 @@ public abstract class Reader {
 	
 	public void addReaderNeighbor(int i) {
 		neighborsReaders.add(i);
+		numNeighborReaders ++;
 	}
 
 	public void addTagNeighbor(int i) { 
