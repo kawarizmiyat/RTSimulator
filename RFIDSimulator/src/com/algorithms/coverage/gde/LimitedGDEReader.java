@@ -9,7 +9,7 @@ import com.simulator.SimSystem;
 
 
 
-public class LimitedGDEReader extends GDEReader {
+public class LimitedGDEReader extends GDEReader  {
 
 	
 	private static final boolean D = true;

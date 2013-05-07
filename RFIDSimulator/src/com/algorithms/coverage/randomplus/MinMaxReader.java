@@ -1,10 +1,10 @@
 package com.algorithms.coverage.randomplus;
 
+
 import com.algorithms.coverage.WriteMessage;
-import com.algorithms.coverage.random.RandomWriteMessage;
 import com.simulator.SimSystem;
 
-public class MinMaxReader extends RandomPlusReader {
+public class MinMaxReader extends RandomPlusReader  {
 
 	protected static final boolean MAX = false;
 	protected static final boolean MIN = true; 
@@ -27,7 +27,6 @@ public class MinMaxReader extends RandomPlusReader {
 			return MinMaxReader.MIN; 
 		}
 	}
-	
 	
 	
 }

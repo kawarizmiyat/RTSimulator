@@ -46,14 +46,18 @@ public class SimSystem  {
 
 	private ArrayList<Reader> readersTable;
 	private ArrayList<Tag> tagsTable;
-	private ArrayList<Integer> nonRedundantReaders;
+
 
 
 	private static final boolean D = false; 
 	private static final boolean badDebug = false;
+
+	private static final int ROUNDS = 20;
 	
 	private final PrintStream log = System.out; 
 
+	private SimResult simResult; 
+	
 	public SimSystem() { 
 
 
@@ -219,38 +223,6 @@ public class SimSystem  {
 
 	}
 
-	private void analyzeResults() {
-		
-		log.printf("*** analyzing results *** \n");
-		
-		nonRedundantReaders = new ArrayList<Integer>();
-		for (int i = 0; i < readersTable.size(); i++) { 
-			if (readersTable.get(i).ownedTags.size() > 0) { 
-
-				 
-					log.printf("reader %d is not redundant: ",
-						readersTable.get(i).id);
-					for (int j = 0; j < readersTable.get(i).ownedTags.size(); j++) { 
-						log.printf("%d ", readersTable.get(i).ownedTags.get(j));
-					}
-					log.printf("\n");
-				
-				nonRedundantReaders.add(readersTable.get(i).id);
-			}
-		}
-
-		int overAllOverWrites = 0; 
-		int overAllReads = 0; 
-		for (int i = 0; i < tagsTable.size(); i++) { 
-			overAllOverWrites  += tagsTable.get(i).numOverWrites;
-			overAllReads += tagsTable.get(i).numReads;
-		}
-		log.printf("Number of over writes %d \n", overAllOverWrites);
-		log.printf("Nuber of reads %d \n", overAllReads);
-
-
-
-	}
 
 	private boolean correctTermination() {
 		for (int i = 0; i < this.readersTable.size(); i++) { 
@@ -448,6 +420,102 @@ public class SimSystem  {
 
 	public void setMaxIterations(int i) {
 		this.maxIterations = i; 
+	}
+
+
+	private void analyzeResults() {
+
+		simResult = new SimResult();
+		
+		log.printf("*** analyzing results *** \n");
+		
+		simResult.nonRedundantReaders = new ArrayList<Integer>();
+		for (int i = 0; i < readersTable.size(); i++) { 
+			if (readersTable.get(i).ownedTags.size() > 0) { 
+
+				 
+					log.printf("reader %d is not redundant: ",
+						readersTable.get(i).id);
+					for (int j = 0; j < readersTable.get(i).ownedTags.size(); j++) { 
+						log.printf("%d ", readersTable.get(i).ownedTags.get(j));
+					}
+					log.printf("\n");
+				
+				simResult.nonRedundantReaders.add(readersTable.get(i).id);
+				simResult.numOwnedTags += readersTable.get(i).ownedTags.size();
+			}
+		}
+
+	
+		int overAllOverWrites = 0; 
+		int overAllReads = 0; 
+		for (int i = 0; i < tagsTable.size(); i++) { 
+			overAllOverWrites  += tagsTable.get(i).numOverWrites;
+			overAllReads += tagsTable.get(i).numReads;
+			
+		}
+		log.printf("Number of over writes %d \n", overAllOverWrites);
+		log.printf("Nuber of reads %d \n", overAllReads);
+
+		
+		simResult.numTags = tagsTable.size();
+		simResult.numReaders = readersTable.size();
+		simResult.nonRedundant = simResult.nonRedundantReaders.size();
+		simResult.numOverWrites = overAllOverWrites; 
+		simResult.numReads = overAllReads;
+
+		// It should be working for all algorithms. 
+		// We made a change in class Reader. We added round .
+		if (roundAlgorithm()) { 
+			
+			// calculating the maximum round. 
+			int maxRound = 0; 
+			for (int i = 0; i < readersTable.size(); i++) { 
+				int t = readersTable.get(i).round;
+				if (t > maxRound) { 
+					maxRound = t;
+				}
+			}
+			
+			simResult.rounds = maxRound;
+		
+			
+			// calculating the number of readers per round.
+			for (int i = 0; i < SimSystem.ROUNDS; i++) { 
+				int temp = 0;
+				for (int j = 0; j < readersTable.size(); j++) { 
+					if (readersTable.get(j).round >= i) { 
+						temp ++;
+					}
+				}
+				simResult.readersPerRound.add(temp);
+			}
+			
+			
+		}
+
+		
+		
+		
+		
+	}
+
+	
+
+	private boolean roundAlgorithm() {
+		
+		return true;
+//		return (readersTable.get(0) instanceof GDEReader || 
+//				readersTable.get(0) instanceof GDESIReader || 
+//				readersTable.get(0) instanceof RandomPlusReader || 
+//				readersTable.get(0) instanceof MinMaxReader );
+		
+	}
+
+
+
+	public SimResult getResult() {
+		return simResult;
 	}
 
 }

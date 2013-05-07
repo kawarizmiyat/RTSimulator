@@ -16,6 +16,7 @@ public abstract class Reader {
 	public final static char myType = 'r';
 	public int numNeighborTags; 
 	public int numNeighborReaders;
+	public int round;
 	
 	// Variables needed to any Event handler in this simulation
 	protected double now;
@@ -37,6 +38,7 @@ public abstract class Reader {
 		numNeighborTags= 0;
 		numNeighborReaders = 0;
 		ownedTags = new ArrayList<Integer>();
+		round = 1;
 	}
 	
 	

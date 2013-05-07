@@ -14,11 +14,11 @@ public class GraphExtractor {
 	// their neighbor tags. 
 
 	public static ArrayList< ArrayList<Integer> > readFile(String filename) { 
-		
-			
+
+
 		ArrayList< ArrayList<Integer> > graph = 
 				new ArrayList< ArrayList<Integer> >();
-		
+
 		try   {
 			FileInputStream in = new FileInputStream(filename);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -35,15 +35,16 @@ public class GraphExtractor {
 
 		} catch(Exception e){
 			System.out.println(e);
+			System.exit(0);
 		}
 
 
-		
+
 		return graph;	
 
 	}
 
-	
+
 	public static void printGraph(ArrayList< ArrayList<Integer> > g) { 
 		for (int i = 0; i < g.size(); i++) { 
 			for (int j = 0; j < g.get(i).size(); j++) { 
@@ -53,32 +54,39 @@ public class GraphExtractor {
 		}
 
 	}
-	
+
 	private static void processLine(String strLine, int i, 
 			ArrayList< ArrayList<Integer> > graph) {
-			
-			
-		
-			ArrayList<Integer> vLine = new ArrayList<Integer>();
-			
-			Pattern p = Pattern.compile("\\s");
-			String tokens[] = p.split(strLine);
-			
+
+
+
+		ArrayList<Integer> vLine = new ArrayList<Integer>();
+
+		Pattern p = Pattern.compile("\\s");
+		String tokens[] = p.split(strLine);
+
+		try { 
 			for (int ti = 0; ti < tokens.length; ti++) { 
-				// System.out.printf("s: %s \n", tokens[ti]); 
-				vLine.add(new Integer(tokens[ti]));
+				System.out.printf("s: %s \n", tokens[ti]); 
+				if (! tokens[ti].equals(""))
+					vLine.add(new Integer(tokens[ti]));
 			}
-		 
-			if (i != graph.size()) { 
-				System.out.printf("A mismatch between i and " +
-						"the graph size !\n");
-				System.exit(0);
-			}
-			graph.add(vLine);
-			
+		} catch (Exception e) { 
+			System.out.printf("Apparantly there is an error \n"); 
+			e.printStackTrace();
+			System.exit(0);
+		}
+		
+		if (i != graph.size()) { 
+			System.out.printf("A mismatch between i and " +
+					"the graph size !\n");
+			System.exit(0);
+		}
+		graph.add(vLine);
+
 	}
 
 
-	
-	
+
+
 }

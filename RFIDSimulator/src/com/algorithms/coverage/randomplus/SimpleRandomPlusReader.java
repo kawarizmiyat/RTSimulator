@@ -4,7 +4,7 @@ import com.algorithms.coverage.WriteMessage;
 import com.algorithms.coverage.random.RandomWriteMessage;
 import com.simulator.SimSystem;
 
-public class SimpleRandomPlusReader extends RandomPlusReader {
+public class SimpleRandomPlusReader extends RandomPlusReader  {
 
 
 	public SimpleRandomPlusReader(SimSystem sim, int id, int maxIt) {

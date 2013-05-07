@@ -7,13 +7,11 @@ import com.algorithms.coverage.Reader;
 import com.algorithms.coverage.Tag;
 import com.algorithms.coverage.TagContent;
 import com.algorithms.coverage.WriteMessage;
-import com.algorithms.coverage.random.RandomWriteMessage;
 import com.simulator.SimSystem;
 
-public abstract class RandomPlusReader extends Reader {
+public abstract class RandomPlusReader extends Reader  {
 
 	public boolean active; 
-	public int round; 
 	public int maxIterations; 
 	
 	
@@ -279,5 +277,6 @@ public abstract class RandomPlusReader extends Reader {
 
 
 
+	
 
 }

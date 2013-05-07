@@ -31,7 +31,7 @@ public class GDESIReader extends Reader {
 	private HashMap<Integer, Integer> wvMap; 
 	public ArrayList<Integer> activeTags;
 	private ArrayList<Integer> Pv; 
-	public int round, count; 
+	public int  count; 
 	
 	public GDESIReader(SimSystem sim, int id) {
 		super(sim, id);
@@ -465,8 +465,8 @@ public class GDESIReader extends Reader {
 		}
 		
 		if (index == -1) { 
-			log.printf("Error: we cannot find %d in the list ! \n", id);
-			System.exit(0);
+			log.printf("warning: we cannot find %d in the list ! \n", id);
+			return; 
 		}
 		
 		list.remove(index);

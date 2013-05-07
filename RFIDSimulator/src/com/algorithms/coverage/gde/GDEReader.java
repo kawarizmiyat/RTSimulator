@@ -41,7 +41,6 @@ public class GDEReader extends Reader {
 	
 
 	private boolean localMaxima; 
-	public int round; 
 	public ArrayList<Integer> activeTags;
 	public int maxIterations; 
 	
@@ -433,5 +432,6 @@ public class GDEReader extends Reader {
 	public boolean isTerminatedStatus(String str) {
 		return (status == GDEReader.STAT_TERMINATE);
 	}
+
 
 }
