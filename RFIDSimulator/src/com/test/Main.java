@@ -26,7 +26,7 @@ public class Main  {
 
 			String foldername = "/home/ahmed/Desktop/Thesis " +
 					"Files/chapters/rfid/coverage/journal/" +
-					"rfid_journal_experiments/exp_750_tags/";
+					"rfid_journal_experiments/exp_100_tags/";
 			String filename = "result_" + k + ".out";
 
 
@@ -38,7 +38,7 @@ public class Main  {
 
 			SimSystem sim = new SimSystem();
 			sim.setMaxIterations(3);
-			sim.setRTGraph("gde", g);
+			sim.setRTGraph("random", g);
 
 
 			sim.run(); 
