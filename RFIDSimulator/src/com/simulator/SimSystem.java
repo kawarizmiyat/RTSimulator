@@ -7,6 +7,8 @@ import com.algorithms.coverage.Message;
 import com.algorithms.coverage.Reader;
 import com.algorithms.coverage.Tag;
 import com.algorithms.coverage.TagContent;
+import com.algorithms.coverage.drre.DRREReader;
+import com.algorithms.coverage.drre.DRRETag;
 import com.algorithms.coverage.gde.GDEReader;
 import com.algorithms.coverage.gde.GDETag;
 import com.algorithms.coverage.gde.LimitedGDEReader;
@@ -21,7 +23,6 @@ import com.algorithms.coverage.randomplus.MinMaxTag;
 import com.algorithms.coverage.randomplus.RandomPlusReader;
 import com.algorithms.coverage.randomplus.RandomPlusTag;
 import com.algorithms.coverage.randomplus.SimpleRandomPlusReader;
-import com.algorithms.coverage.rre.DRREReader;
 import com.algorithms.coverage.rre.RREReader;
 import com.algorithms.coverage.rre.RRETag;
 
@@ -385,7 +386,7 @@ public class SimSystem  {
 				}
 				
 				for (int i = 0; i < tagsSize; i++) { 
-					tagsTable.add(new RRETag(i));
+					tagsTable.add(new DRRETag(i));
 				}
 				
 				

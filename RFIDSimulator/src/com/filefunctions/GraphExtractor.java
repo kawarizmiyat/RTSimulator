@@ -67,7 +67,7 @@ public class GraphExtractor {
 
 		try { 
 			for (int ti = 0; ti < tokens.length; ti++) { 
-				System.out.printf("s: %s \n", tokens[ti]); 
+				// System.out.printf("s: %s \n", tokens[ti]); 
 				if (! tokens[ti].equals(""))
 					vLine.add(new Integer(tokens[ti]));
 			}
