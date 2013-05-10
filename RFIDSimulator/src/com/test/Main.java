@@ -24,9 +24,14 @@ public class Main  {
 			// String foldername = "Files/";
 			// String filename = "scen_" + k ; 
 
-			String foldername = "/home/ahmed/Desktop/Thesis " +
-					"Files/chapters/rfid/coverage/journal/" +
-					"rfid_journal_experiments/exp_100_tags/";
+//			String foldername = "/home/ahmed/Desktop/Thesis " +
+//					"Files/chapters/rfid/coverage/journal/" +
+//					"rfid_journal_experiments/exp_750_tags/";
+
+
+			String foldername = "/home/ahmed/Desktop/Programming/rfid/" +
+					"journal_experiments/exp_graphs/exp_150_readers/";
+
 			String filename = "result_" + k + ".out";
 
 
@@ -37,8 +42,8 @@ public class Main  {
 
 
 			SimSystem sim = new SimSystem();
-			sim.setMaxIterations(3);
-			sim.setRTGraph("random", g);
+			sim.setMaxIterations(2);
+			sim.setRTGraph("limitedGDE", g);
 
 
 			sim.run(); 

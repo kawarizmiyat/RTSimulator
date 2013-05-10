@@ -13,7 +13,7 @@ import com.simulator.SimSystem;
 
 public class GDESIReader extends Reader {
 
-	private static final boolean D = true;
+	private static final boolean D = false;
 
 	private static final String STAT_IDLE = "STAT_IDLE";
 	private static final String STAT_MAKE_ROUND_DECISION = "STAT_MAKE_ROUND_DECISION";
@@ -414,13 +414,13 @@ public class GDESIReader extends Reader {
 		}
 		
 		
-		log.printf("at findMax "); 
+		// log.printf("at findMax "); 
 		
 		GDESITagValue max = mine; 
 		
-		log.println("max = mine = " + max); 
+		// log.println("max = mine = " + max); 
 		for (int i = 0; i < allVs.size(); i++) { 
-			log.println("checking: " + allVs.get(i));
+			// log.println("checking: " + allVs.get(i));
 			if (max.compareTo(allVs.get(i)) < 0) { 
 			
 				max = allVs.get(i);
@@ -451,7 +451,8 @@ public class GDESIReader extends Reader {
 	
 	private void removeTag(ArrayList<Integer> list, Integer id) {
 		if (list.size() == 0) { 
-			log.printf("warning: the list in removeTag is empty ! \n");
+			
+			// log.printf("warning: the list in removeTag is empty ! \n");
 			// System.exit(0);
 			return; 
 		}
@@ -465,7 +466,7 @@ public class GDESIReader extends Reader {
 		}
 		
 		if (index == -1) { 
-			log.printf("warning: we cannot find %d in the list ! \n", id);
+			// log.printf("warning: we cannot find %d in the list ! \n", id);
 			return; 
 		}
 		

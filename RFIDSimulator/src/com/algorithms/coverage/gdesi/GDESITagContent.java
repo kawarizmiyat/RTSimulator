@@ -13,7 +13,7 @@ public class GDESITagContent extends TagContent {
 	public HashMap<Integer, GDESITagStruct> table; 
 	public int currentRound; 
 	private int maxId, maxIdPvSize; 
-	private static final boolean D = true; 
+	private static final boolean D = false; 
 	
 	
 	public GDESITagContent() { 
