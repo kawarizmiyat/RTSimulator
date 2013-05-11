@@ -1,0 +1,29 @@
+# Source: 
+#			String foldername = "/home/ahmed/Desktop/Programming/rfid/" + 
+#					"journal_experiments/exp_graphs/exp_1000_tags_100_readers/"; 
+
+# 1000 tags, 1000 readers
+
+# RRE 
+49.03 	3.75
+
+#RANDOM
+37.57 	2.86 
+
+# DRRE:
+49.26	5.02
+
+# GDE: 
+29.21	1.36
+
+# Limited GDE 1
+35.09	2.92
+
+# Limited GDE 2
+29.89	1.76
+
+# MIN MAX
+32.68	2.12
+
+
+
