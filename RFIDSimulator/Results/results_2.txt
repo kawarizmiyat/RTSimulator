@@ -2,19 +2,38 @@
 #			String foldername = "/home/ahmed/Desktop/Programming/rfid/" + 
 #					"journal_experiments/exp_graphs/exp_1000_tags_100_readers/"; 
 
-# 1000 tags, 1000 readers
+# 1000 tags, 100 readers
+
+
+# Can we verify the results of RRE and RANDOM using a different implementation ?
+# This was done using the c++ implementation. Note that the results of RRE may be different
+# a bet. The difference is not significant and can be made the same. The issue is that
+# the C++ RRE stores the readers as vector< vector<int> >. 
+# It then sort the readers according to the vector sizes. It does not take into consideration
+# the identifiers of the readers. This is not a big difference though. 
 
 # RRE 
-49.03 	3.75
+# 75			100				125				150
+43.09	3.39	49.03 	3.75	53.27	4.65	57.13	5.09
+
+
 
 #RANDOM
-37.57 	2.86 
+# 75			100				125				150
+36.25	2.56	37.57 	2.86 	38.46	2.90	38.78	3.13
+
+# Why Random is better than RRE in this case ? Our initial observation is the following. 
+# Consider the sequential algorithm of Section *. After taking the highest ranked reader (r0), 
+# we get a scenario where the following ranked readers have most of their tags visited by r0
+#, but not all of them. The algorithm is forced to pick most of these readers although 
+# they dont give an optimal solution. In RANDOM, we pick random readers. 
+
 
 # DRRE:
-49.26	5.02
+42.58	4.18	49.26	5.02	54.69	5.85	58.95	6.20
 
 # GDE: 
-29.21	1.36
+29.37	1.45	29.21	1.36	28.84   1.598	29.1	1.42
 
 # Limited GDE 1
 35.09	2.92
@@ -23,7 +42,7 @@
 29.89	1.76
 
 # MIN MAX
-32.68	2.12
+32.44	2.00	32.68	2.12	33.26	2.20	33.05	2.15
 
 
 

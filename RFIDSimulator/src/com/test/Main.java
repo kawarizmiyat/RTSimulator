@@ -29,9 +29,13 @@ public class Main  {
 //					"rfid_journal_experiments/exp_750_tags/";
 
 
-			String foldername = "/home/ahmed/Desktop/Programming/rfid/" +
-					"journal_experiments/exp_graphs/exp_150_readers/";
+//			String foldername = "/home/ahmed/Desktop/Programming/rfid/" +
+//					"journal_experiments/exp_graphs/exp_150_readers/";
 
+			
+			String foldername = "/home/ahmed/Desktop/Programming/rfid/" + 
+					"journal_experiments/exp_graphs/exp_1000_tags_75_readers/"; 
+			
 			String filename = "result_" + k + ".out";
 
 
@@ -42,8 +46,8 @@ public class Main  {
 
 
 			SimSystem sim = new SimSystem();
-			sim.setMaxIterations(2);
-			sim.setRTGraph("limitedGDE", g);
+			sim.setMaxIterations(1);
+			sim.setRTGraph("minMax", g);
 
 
 			sim.run(); 
