@@ -20,7 +20,7 @@ public class Main  {
 		ArrayList<SimResult> results = new ArrayList<SimResult>();
 
 
-		for (int k = 1; k <= 100; k++ ) { 
+		for (int k = 0; k < 50; k++ ) { 
 			// String foldername = "Files/";
 			// String filename = "scen_" + k ; 
 
@@ -33,10 +33,17 @@ public class Main  {
 //					"journal_experiments/exp_graphs/exp_150_readers/";
 
 			
-			String foldername = "/home/ahmed/Desktop/Programming/rfid/" + 
-					"journal_experiments/exp_graphs/exp_1000_tags_75_readers/"; 
+//			String foldername = "/home/ahmed/Desktop/Programming/rfid/" + 
+//					"journal_experiments/exp_graphs/exp_1000_tags_150_readers/"; 
+	
+//			String foldername = 
+//					"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/arb_covers_5_100/";
+	
 			
-			String filename = "result_" + k + ".out";
+			String foldername = 
+					"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/region_dir_200r_250t/";
+			
+			String filename = "result_" + k + ".dat";
 
 
 			System.out.println("opening " + foldername + filename );
@@ -46,9 +53,10 @@ public class Main  {
 
 
 			SimSystem sim = new SimSystem();
-			sim.setMaxIterations(1);
-			sim.setRTGraph("minMax", g);
+			sim.setMaxIterations(3);
+			sim.setRTGraph("gdeSi", g);
 
+			// TODO: profile gdeSi  
 
 			sim.run(); 
 

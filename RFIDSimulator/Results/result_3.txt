@@ -1,0 +1,22 @@
+# 			String foldername = 
+#					"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/arb_covers/";
+# 100 readers, 1000 tags, p=0.2 (variable p)
+
+#RRE: 
+#	0.2				0.05
+24.75	1.67		
+
+
+# RANDOM:
+#	0.2
+26.92	1.87
+
+
+# GDE: (The second row: number of rounds !)
+#	0.2
+16.82	0.51
+16.67	0.51
+
+# DRRE:
+# 0.2
+26.94	1.74 
