@@ -1,8 +1,11 @@
 package com.test;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.filefunctions.GraphExtractor;
 import com.my.utilities.MyUtil;
@@ -12,126 +15,179 @@ import com.simulator.SimSystem;
 public class Main  {
 	public static void main(String [] args) {
 
-
-		// test(); 
-
-
 		boolean debug = true; 
+		
+		String[] algString = {"drre" , "rre", "random", 
+				"minMax", "gde", "limGDE1", "limGDE2", "random2", "random3"
+		};
+
+		double[] finalResultsMean = new double[algString.length];
+		double[] finalResultsStd = new double[algString.length];
 		ArrayList<SimResult> results = new ArrayList<SimResult>();
+		
+
+		for (int alg = 0; alg < algString.length; alg++) { 
+
+			results.clear();
 
 
-		for (int k = 0; k < 50; k++ ) { 
-			// String foldername = "Files/";
-			// String filename = "scen_" + k ; 
+			for (int k = 0; k < 40; k++ ) { 
+				// String foldername = "Files/";
+				// String filename = "scen_" + k ; 
 
-//			String foldername = "/home/ahmed/Desktop/Thesis " +
-//					"Files/chapters/rfid/coverage/journal/" +
-//					"rfid_journal_experiments/exp_750_tags/";
-
-
-//			String foldername = "/home/ahmed/Desktop/Programming/rfid/" +
-//					"journal_experiments/exp_graphs/exp_150_readers/";
-
-			
-//			String foldername = "/home/ahmed/Desktop/Programming/rfid/" + 
-//					"journal_experiments/exp_graphs/exp_1000_tags_150_readers/"; 
-	
-//			String foldername = 
-//					"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/arb_covers_5_100/";
-	
-			
-			String foldername = 
-					"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/region_dir_200r_250t/";
-			
-			String filename = "result_" + k + ".dat";
+				//			String foldername = "/home/ahmed/Desktop/Thesis " +
+				//					"Files/chapters/rfid/coverage/journal/" +
+				//					"rfid_journal_experiments/exp_750_tags/";
 
 
-			System.out.println("opening " + foldername + filename );
-
-			ArrayList< ArrayList<Integer> > g = 
-					GraphExtractor.readFile(foldername+filename);
+				//			String foldername = "/home/ahmed/Desktop/Programming/rfid/" +
+				//					"journal_experiments/exp_graphs/exp_150_readers/";
 
 
-			SimSystem sim = new SimSystem();
-			sim.setMaxIterations(3);
-			sim.setRTGraph("gdeSi", g);
+				//			String foldername = "/home/ahmed/Desktop/Programming/rfid/" + 
+				//					"journal_experiments/exp_graphs/exp_1000_tags_150_readers/"; 
 
-			// TODO: profile gdeSi  
-
-			sim.run(); 
+				//			String foldername = 
+				//					"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/arb_covers_5_100/";
 
 
-			SimResult result = sim.getResult();
-			results.add(result);
-
-		}
-
-		if (debug) {
-
-			for (int i = 0; i < results.size(); i++)
-				System.out.println(results.get(i));
+				//			String foldername = 
+				//					"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/region_dir_150r_100t/";
 
 
+				String foldername = 
+						"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/arb_covers_r100_p_80_100/";
+
+				String filename = "result_" + k + ".dat";
 
 
+				System.out.println("opening " + foldername + filename );
 
-			ArrayList<Integer> allNumReaders, allNumOverWrites, 
-			allRounds, allNonRedundant, allNumReads, allNumTags, 
-			allNumOwnedTags; 
+				ArrayList< ArrayList<Integer> > g = 
+						GraphExtractor.readFile(foldername+filename);
 
-			allNumReaders = new ArrayList<Integer>();
-			allNumOverWrites = new ArrayList<Integer>();
-			allRounds = new ArrayList<Integer>();
-			allNumTags = new ArrayList<Integer>();
-			allNumOwnedTags = new ArrayList<Integer>();
-			allNonRedundant = new ArrayList<Integer>();
-			allNumReads = new ArrayList<Integer>();
 
-			for (int i = 0; i < results.size(); i++ )  {
-				SimResult r = results.get(i);
-				allNumReaders.add(r.numReaders);
-				allNonRedundant.add(r.nonRedundant);
-				allRounds.add(r.rounds); 
-				allNumOverWrites.add(r.numOverWrites); 
-				allNumReads.add(r.numReads);
-				allNumTags.add(r.numTags);
-				allNumOwnedTags.add(r.numOwnedTags);
+				SimSystem sim = new SimSystem();
 
+				String command = algString[alg];
+				int commandIterations = 1;
+
+				if (algString[alg].equals("limGDE1")) { 
+					command = "limitedGDE"; 
+					commandIterations = 1;
+				} else if (algString[alg].equals("limGDE2")) { 
+					command = "limitedGDE"; 
+					commandIterations = 2; 
+				} else if (algString[alg].equals("random2")) { 
+					command = "randomPlus"; 
+					commandIterations = 2; 
+				} else if (algString[alg].equals("random3")) { 
+					command = "randomPlus"; 
+					commandIterations = 3; 
+				}
+
+				System.out.printf("executing algorithm %s with iteration $d \n", 
+						command, commandIterations); 
+
+				sim.setMaxIterations(commandIterations);
+				sim.setRTGraph(command, g);
+
+				// TODO: profile gdeSi  
+
+				sim.run(); 
+
+
+				SimResult result = sim.getResult();
+				results.add(result);
 
 			}
 
-			StatPair a = new StatPair();
+			if (debug) {
 
-			a.meanStd(allNumReaders); 
-			a.print("allNumReaders");
-
-
-			a.meanStd(allNumTags); 
-			a.print("allNumTags");
-
-
-			a.meanStd(allNumReads);
-			a.print("allNumReads");
-
-			a.meanStd(allNumOverWrites); 
-			a.print("allNumOverWrites");		
-
-			a.meanStd(allNonRedundant);
-			a.print("allNonRedundant");
+				for (int i = 0; i < results.size(); i++)
+					System.out.println(results.get(i));
 
 
 
-			a.meanStd(allRounds); 
-			a.print("allRounds");
 
 
-			// for (int i = 0; i < results.size(); i++) { 
-			// 	print(results.get(i).readersPerRound);
-			// }
+				ArrayList<Integer> allNumReaders, allNumOverWrites, 
+				allRounds, allNonRedundant, allNumReads, allNumTags, 
+				allNumOwnedTags; 
 
+				allNumReaders = new ArrayList<Integer>();
+				allNumOverWrites = new ArrayList<Integer>();
+				allRounds = new ArrayList<Integer>();
+				allNumTags = new ArrayList<Integer>();
+				allNumOwnedTags = new ArrayList<Integer>();
+				allNonRedundant = new ArrayList<Integer>();
+				allNumReads = new ArrayList<Integer>();
+
+				for (int i = 0; i < results.size(); i++ )  {
+					SimResult r = results.get(i);
+					allNumReaders.add(r.numReaders);
+					allNonRedundant.add(r.nonRedundant);
+					allRounds.add(r.rounds); 
+					allNumOverWrites.add(r.numOverWrites); 
+					allNumReads.add(r.numReads);
+					allNumTags.add(r.numTags);
+					allNumOwnedTags.add(r.numOwnedTags);
+
+
+				}
+
+				StatPair a = new StatPair();
+
+				a.meanStd(allNumReaders); 
+				//a.print("allNumReaders");
+
+
+
+				a.meanStd(allNumTags); 
+				//a.print("allNumTags");
+
+
+				a.meanStd(allNumReads);
+				//a.print("allNumReads");
+
+				a.meanStd(allNumOverWrites); 
+				//a.print("allNumOverWrites");		
+
+				a.meanStd(allNonRedundant);
+				//a.print("allNonRedundant");
+				// including final results of all NumReaders
+				System.out.printf("inserting " + a + "into " + 
+						algString[alg] + "\n");
+				// finalResults.put(algString[alg], new StatPair(a));
+				finalResultsMean[alg] = a.mean; 
+				finalResultsStd[alg] = a.std;
+
+
+				a.meanStd(allRounds); 
+				//a.print("allRounds");
+
+
+				// for (int i = 0; i < results.size(); i++) { 
+				// 	print(results.get(i).readersPerRound);
+				// }
+
+			}
+
+
+			// print finalResults.
+			for (int i = 0; i < algString.length; i++) { 
+				System.out.printf("%s \t\t", algString[i]);
+			}
+			System.out.println();
+			
+			DecimalFormat df = new DecimalFormat("#.##");
+			for (int i = 0; i < finalResultsMean.length; i++) { 
+				System.out.print(df.format(finalResultsMean[i]) + "\t");
+				System.out.print(df.format(finalResultsStd[i]) + "\t"); 
+			}
+			System.out.println();
+			
 		}
-
-
 
 	}
 
@@ -257,6 +313,15 @@ class StatPair {
 	static double std; 
 	static double mean; 
 
+	public StatPair() { 
+
+	}
+
+	public StatPair(StatPair a) {
+		this.mean = a.mean;
+		this.std = a.std; 
+	}
+
 	public  void meanStd(ArrayList<Integer> list) { 
 		double sum = 0; 
 		for (int i = 0; i < list.size(); i++) 
@@ -284,3 +349,4 @@ class StatPair {
 
 
 }
+
