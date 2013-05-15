@@ -9,6 +9,7 @@ import java.util.Map;
 
 import com.filefunctions.GraphExtractor;
 import com.my.utilities.MyUtil;
+import com.my.utilities.StatPair;
 import com.simulator.SimResult;
 import com.simulator.SimSystem;
 
@@ -21,8 +22,12 @@ public class Main  {
 				"minMax", "gde", "limGDE1", "limGDE2", "random2", "random3"
 		};
 
-		double[] finalResultsMean = new double[algString.length];
-		double[] finalResultsStd = new double[algString.length];
+		
+		StatPair[] statNonRedundant = new StatPair[algString.length];
+		StatPair[] statOverwrites = new StatPair[algString.length];
+		StatPair[] statReads = new StatPair[algString.length];
+		StatPair[] statRounds = new StatPair[algString.length];
+		
 		ArrayList<SimResult> results = new ArrayList<SimResult>();
 		
 
@@ -31,7 +36,7 @@ public class Main  {
 			results.clear();
 
 
-			for (int k = 0; k < 40; k++ ) { 
+			for (int k = 1; k <= 100; k++ ) { 
 				// String foldername = "Files/";
 				// String filename = "scen_" + k ; 
 
@@ -58,10 +63,14 @@ public class Main  {
 				// String foldername = 
 				// 		"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/arb_covers_r100_p_80_100/";
 
-				String foldername = 
-				 		"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/normal_r100_t750/";
+				// String foldername = 
+				// 		"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/normal_r200_t750/";
 			
-				String filename = "result_" + k + ".dat";
+				String foldername = 
+						"/home/ahmed/Desktop/Programming/rfid/journal_experiments/exp_graphs/uniform_t750_r100/"; 
+				
+				
+				String filename = "result_" + k + ".out";
 
 
 				System.out.println("opening " + foldername + filename );
@@ -152,24 +161,35 @@ public class Main  {
 
 				a.meanStd(allNumReads);
 				//a.print("allNumReads");
+				statReads[alg] = new StatPair(a);
+				// finalReadMean[alg] = a.mean; 
+				// finalReadStd[alg] = a.std; 
 
 				a.meanStd(allNumOverWrites); 
 				//a.print("allNumOverWrites");		
-
+				statOverwrites[alg] = new StatPair(a);
+				// finalOverwriteMean[alg] = a.mean; 
+				// finalOverwriteStd[alg] = a.std; 
+				
 				a.meanStd(allNonRedundant);
 				//a.print("allNonRedundant");
 				// including final results of all NumReaders
 				System.out.printf("inserting " + a + "into " + 
 						algString[alg] + "\n");
 				// finalResults.put(algString[alg], new StatPair(a));
-				finalResultsMean[alg] = a.mean; 
-				finalResultsStd[alg] = a.std;
-
+				// finalResultsMean[alg] = a.mean; 
+				// finalResultsStd[alg] = a.std;
+				statNonRedundant[alg] = new StatPair(a);
+				
 
 				a.meanStd(allRounds); 
 				//a.print("allRounds");
 
-
+				// finalRoundMean[alg] = a.mean; 
+				// finalRoundStd[alg] = a.std;
+				statRounds[alg] = new StatPair(a);
+				
+				
 				// for (int i = 0; i < results.size(); i++) { 
 				// 	print(results.get(i).readersPerRound);
 				// }
@@ -184,11 +204,26 @@ public class Main  {
 			System.out.println();
 			
 			DecimalFormat df = new DecimalFormat("#.##");
-			for (int i = 0; i < finalResultsMean.length; i++) { 
-				System.out.print(df.format(finalResultsMean[i]) + "\t");
-				System.out.print(df.format(finalResultsStd[i]) + "\t"); 
+			System.out.println("redundant readers:");
+			for (int i = 0; i < statNonRedundant.length; i++) {
+				System.out.print(statNonRedundant[i] + "\t");
 			}
-			System.out.println();
+
+			
+			System.out.println("\nreads:");
+			for (int i = 0; i < statReads.length; i++) { 
+				System.out.print(statReads[i] + "\t");
+			}			
+			
+			System.out.println("\noverwrite:");
+			for (int i = 0; i < statOverwrites.length; i++) { 
+				System.out.print(statOverwrites[i]  + "\t"); 
+			}						
+			
+			System.out.println("\nrounds:");
+			for (int i = 0; i < statRounds.length; i++) { 
+				System.out.print(statRounds[i]  + "\t"); 
+			}			
 			
 		}
 
@@ -312,44 +347,5 @@ public class Main  {
 
 }
 
-class StatPair { 
-	static double std; 
-	static double mean; 
 
-	public StatPair() { 
-
-	}
-
-	public StatPair(StatPair a) {
-		this.mean = a.mean;
-		this.std = a.std; 
-	}
-
-	public  void meanStd(ArrayList<Integer> list) { 
-		double sum = 0; 
-		for (int i = 0; i < list.size(); i++) 
-			sum += list.get(i);
-		mean = sum / (double) list.size(); 
-
-		double sqrdSum = 0.0;
-		for (int i = 0; i < list.size(); i++) { 
-			sqrdSum += Math.pow((list.get(i) - mean), 2); 
-		}
-
-		double var = sqrdSum / (double) list.size(); 
-		std = Math.sqrt(var);
-	}
-
-	public void print(String string) {
-		System.out.println(string + " : "+ this);
-
-	}
-
-	@Override
-	public String toString() {
-		return "statPair [mean=" + mean + ", std=" + std + "]";
-	}
-
-
-}
 
