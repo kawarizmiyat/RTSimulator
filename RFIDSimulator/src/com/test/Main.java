@@ -55,9 +55,12 @@ public class Main  {
 				//					"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/region_dir_150r_100t/";
 
 
-				String foldername = 
-						"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/arb_covers_r100_p_80_100/";
+				// String foldername = 
+				// 		"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/arb_covers_r100_p_80_100/";
 
+				String foldername = 
+				 		"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/normal_r100_t750/";
+			
 				String filename = "result_" + k + ".dat";
 
 

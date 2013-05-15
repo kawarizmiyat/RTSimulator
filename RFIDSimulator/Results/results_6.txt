@@ -1,0 +1,37 @@
+# normal distribution. 
+# parameters: 
+
+#		// Normal distribution: 
+#		int n = 50; 
+#		int numTags = 100; 
+#		int numReaders = 75;
+#		int maxX = 200; 
+#		int maxY = 200; 
+#		char type = 'n';
+#		String foldername = String.format("normal_r%d_t%d", numReaders, numTags);
+#		String filename = "result";
+#		int factorReaders = 3; 
+#		int factorTags = 3; 
+
+
+# 		RandomGraphGenerator.generateRandomGraphs(n, numReaders, numTags, 
+#				maxX, maxY, foldername, filename, type, factorReaders, factorTags);
+
+#	int numReaders = 75;
+# variable tag set size: 
+# 		drre 			rre 			random 			minMax 			gde 			limGDE1 			limGDE2 		random2 		random3 		
+100		17.35	6		13.68	3.73	9.42	3.52	7.95	2.51	6.08	1.56	10.75		2.61	7.48	2.44	9.35	2.82	9.08	2.94	
+250		27.92	10.02	21.9	4.88	12.02	4.09	9.45	2.66	7.3		1.98	17.78		4.29	11.18	3.66	11.25	3.52	10.4	3.09	
+500		28.18	13.4	24.22	4.56	12.65	4.5		9.88	3.02	7.62	2.23	20.3		4.69	13.65	5.02	11.7	3.35	11		3.7	
+750		35.12	12.23	29.82	6.37	14.58	4.55	10.95	3.22	8.48	2.32	24.15		5.5		16.8	6.42	12.92	3.96	12.48	3.38	
+
+
+# r: 100
+		drre 			rre 			random 			minMax 			gde 			limGDE1 		limGDE2 		random2 		random3 		
+100		19.85	7.43	15.02	3.39	9.52	2.36	7.82	2.22	6.05	1.47	11.8	3.41	7.6		3.15	9.15	2.91	8.8		2.4	
+250		29.68	14.1	23.45	6.73	12.08	5.68	9.5		4.18	7.6		2.62	18.5	5.33	12.18	5.58	11.35	4.74	11.25	4.15	
+500		33.42	14.17	27.92	6.56	11.75	4		9.5		3.31	7.3		2.2		23.62	4.91	14.22	6.32	11.15	3.31	10.4	3.42	
+750		39.05	15.59	31.8	6.96	13.82	4.35	9.58	2.85	7.75	1.79	26.48	6.45	16.88	6.47	12.45	3.49	11.7	3.37	
+
+
+# r: 200 
