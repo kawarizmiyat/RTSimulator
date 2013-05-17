@@ -13,7 +13,7 @@ import com.simulator.SimSystem;
 
 public class GDESIReader extends Reader {
 
-	private static final boolean D = false;
+	private static final boolean D = true, D1 = true;
 
 	private static final String STAT_IDLE = "STAT_IDLE";
 	private static final String STAT_MAKE_ROUND_DECISION = "STAT_MAKE_ROUND_DECISION";
@@ -28,15 +28,27 @@ public class GDESIReader extends Reader {
 	private static final Integer NULL_OWNER = -1 ;
 
 	
-	private HashMap<Integer, Integer> wvMap; 
+	public HashMap<Integer, Integer> wvMap; 
 	public ArrayList<Integer> activeTags;
-	private ArrayList<Integer> Pv; 
 	public int  count; 
+	private ArrayList<Integer> myViewPv;
+	private ArrayList<Integer> tagViewPv;
+	public GlobalViewerGDESI globalViewer;
 	
-	public GDESIReader(SimSystem sim, int id) {
+	private boolean traceNode() { 
+		return (this.id == 7);
+	}
+	
+	public GDESIReader(SimSystem sim, int id, GlobalViewerGDESI g) {
 		super(sim, id);
 		round = 0;
-		Pv = new ArrayList<Integer>();
+		
+		globalViewer = g; 
+		// TODO: there is no need to use tagViewPv ! 
+		tagViewPv = globalViewer.PVS.get(this.id);
+		myViewPv = new ArrayList<Integer>();
+		
+		
 		wvMap = new HashMap<Integer, Integer>();
 		activeTags = new ArrayList<Integer>();
 		changeStatus(GDESIReader.STAT_IDLE);
@@ -80,7 +92,7 @@ public class GDESIReader extends Reader {
 			
 			// while reader is active. .. see line 2 in Pseudocode.
 			if (! isActive()) { 
-				if (D) { 
+				if (D1) { 
 					log.printf("*** reader %d has all its neighbors tags deactivated and will terminate" +
 							"at round %d \n",
 							this.id, round);
@@ -112,15 +124,26 @@ public class GDESIReader extends Reader {
 		changeStatus(GDESIReader.STAT_WRITE_ROUND);
 		round ++; 
 		
-		
-		// Pv = activeTags at the beginning of the round. 
-		Pv.clear(); 
-		for (int i = 0; i < activeTags.size(); i++) { 
-			Pv.add(activeTags.get(i)); 
+		if (round > 50) { 
+			debug();
 		}
 		
+		
+		// TODO: do we really need this ? 
+		// NO: globalViewer.PVS[this.id] is sufficient. 
+		
+		// Pv = activeTags at the beginning of the round. 
+		tagViewPv.clear(); 
+		tagViewPv.addAll(activeTags);
+		
+		myViewPv.clear();
+		myViewPv.addAll(activeTags);
+		
 		// initialize the value of count at each round.
-		count = Pv.size();
+		count = tagViewPv.size();
+		
+		
+		
 		
 		// end preparation.
 		
@@ -161,12 +184,22 @@ public class GDESIReader extends Reader {
 	
 	}
 
-	private WriteMessage getWriteMessage(int tag) {
+private void debug() {
+	sim.debug();
+}
 
-		GDESIWriteMessage m = new GDESIWriteMessage(this.id, this.Pv, wv(tag), round ); 
-		return m; 
+//	private WriteMessage getWriteMessage(int tag) {
+//
+//		GDESIWriteMessage m = new GDESIWriteMessage(this.id, this.Pv, wv(tag), round ); 
+//		return m; 
+//	}
+
+	private WriteMessage getWriteMessage(int tag) { 
+		GDESIWriteMessage m = new GDESIWriteMessage(this.id, wv(tag), round);
+		return m;
 	}
-
+	
+	
 	private int wv(int tag) {
 		return wvMap.get(tag); 
 	}
@@ -294,8 +327,21 @@ public class GDESIReader extends Reader {
 				}
 				
 				// deactivate tag t (remove from activeTags)
-				removeTag(activeTags, t);
-				i -- ;			// note, we decrease i because the iteration is over ativeTags. 
+				log.printf("active tags before: ");
+				print(activeTags);
+
+				
+				boolean b = removeTag(activeTags, t); 
+				if (b) {
+					i -- ;			// note, we decrease i because the iteration is over ativeTags. 
+				}
+
+				log.println("b: " + b + " after deletion " + t + " :" ); 
+				print(activeTags);
+				
+				if (activeTags.size() == 0) { 
+					log.printf("**** reader %d is supposed to quit ! *** \n", this.id);
+				}
 				
 				if (D) { 
 					log.printf("reader %d deactivates tag %d (remove from activeTag) \n", 
@@ -303,9 +349,12 @@ public class GDESIReader extends Reader {
 				}
 				
 				// Remove tag t from pv 
-				removeTag(this.Pv, t); 
-
-				if (D) { 
+				// boolean success = removeTag(this.Pv, t); 
+	
+				boolean success = removeTag(myViewPv, t);
+				
+				
+				if (D & success) { 
 					log.printf("reader %d remove tag %d from Pv \n", 
 							this.id, t);
 				}
@@ -315,17 +364,38 @@ public class GDESIReader extends Reader {
 				// You should note that for each decrementing of this.Pv, count is decreased by 1. 
 				// initially count == this.Pv.size() [see startGDESIRound()].. 
 				// Therefore, you must make sure that count == this.Pv.Size all the time.
-				count --; 
-				
-				if (D) {
-					log.printf("reader %d decreases count to %d \n", this.id, count );
+				if (success) { 
+					count --; 
+					
+					if (D) {
+						log.printf("reader %d decreases count to %d \n", this.id, count );
+					}
 				}
+				
+				if (count < 0) { 
+					log.printf("error at %d : count cannot be negative. \n", this.id); 
+				}
+				
+
 				
 				
 				// own tag if vSharp is yourself.
 				if (this.id == vSharp) { 
 					
-					this.ownTag(t);
+					boolean result = this.ownTag(t);
+					
+					for (int k = 0; k < this.activeTags.size(); k++) { 
+						if (activeTags.get(k) == t) { 
+							log.printf("reader %d owned tag %d but it is still active ! ",
+									this.id, t );
+							//System.exit(0);
+						}
+					}
+					
+					if (result == false ) { 
+						log.printf("error while owning a tag !");
+					}
+					
 					
 					if (D) { 
 						log.printf("reader %d owns tag %d \n", this.id, t);
@@ -356,7 +426,14 @@ public class GDESIReader extends Reader {
 					// count --;
 					// end for. 
 					
-					ArrayList<Integer> st = sharedTags(tContent, this.id, vSharp);
+					// TODO: this can be improved further. 
+					// For instance. represent the tags as pairs <Integer, boolean>. 
+					// Therefore, delete can be done in one step. 
+					
+					// st: shared tags.
+					// ArrayList<Integer> st = sharedTags(tContent, this.id, vSharp);
+					ArrayList<Integer> st = sharedTags(this.id, vSharp);
+					
 					
 					if(D) { 
 						log.printf("the shared tags between reader %d and reader %d at tag %d: ", 
@@ -368,20 +445,20 @@ public class GDESIReader extends Reader {
 						log.println(tContent);
 					}
 					
-					int sizeBefore = this.Pv.size();
-					ArrayList<Integer> res = MyUtil.setDifference(this.Pv, st);
-					this.Pv.clear(); 
-					this.Pv.addAll(res);
+					int sizeBefore = this.myViewPv.size();
+					ArrayList<Integer> res = MyUtil.setDifference(this.myViewPv, st);
+					this.myViewPv.clear(); 
+					this.myViewPv.addAll(res);
 					
 					if (D) { 
 						log.printf("reader %d updated the set Pv to: ", this.id);
-						for (int k = 0; k < this.Pv.size(); k++) { 
-							log.printf("%d ", this.Pv.get(k));
+						for (int k = 0; k < this.myViewPv.size(); k++) { 
+							log.printf("%d ", this.myViewPv.get(k));
 						}
 						log.printf("\n");
 					}
 					
-					int sizeAfter = this.Pv.size();
+					int sizeAfter = this.myViewPv.size();
 					count = count - (sizeBefore - sizeAfter);
 					
 					if (D) {
@@ -397,10 +474,20 @@ public class GDESIReader extends Reader {
 	}
 
 
+	private void print(ArrayList<Integer> list) {
+		for (int i = 0; i < list.size(); i++) { 
+			log.printf("%d ", list.get(i));
+		}
+		log.println();
+		
+	}
 
+	// TODO: This should be optimized more. 
 	private int findMax(int t, GDESITagContent tContent) {
 		
+		// exactly the same 
 		GDESITagValue mine = new GDESITagValue(this.count, this.id);
+		// GDESITagValue mine = new GDESITagValue(myViewPv.size(),id);
 		
 		ArrayList<GDESITagValue> allVs = new ArrayList<GDESITagValue>(); 
 		
@@ -408,7 +495,8 @@ public class GDESIReader extends Reader {
 			
 			GDESITagStruct e = entry.getValue();
 			if (e.id != this.id) { 
-				allVs.add(new GDESITagValue(e.pv.size(), e.id )); 
+				int s = globalViewer.PVS.get(e.id).size();
+				allVs.add(new GDESITagValue(s, e.id )); 
 			}
 			
 		}
@@ -434,12 +522,24 @@ public class GDESIReader extends Reader {
 		return max.id; 
 	}
 
+	
+	private ArrayList<Integer> sharedTags(int v, int vs) { 
+		
+		ArrayList<Integer> vPv = myViewPv; 
+		ArrayList<Integer> vsPv = globalViewer.PVS.get(vs);
+		return MyUtil.interesect(vPv, vsPv);
+		
+	}
+	
 	private ArrayList<Integer> sharedTags(GDESITagContent tContent, int v,
 			int vs) {
 
 		
-		ArrayList<Integer> vPv = tContent.table.get(v).pv; 
-		ArrayList<Integer> vsPv = tContent.table.get(vs).pv; 
+		// ArrayList<Integer> vPv = tContent.table.get(v).pv; 
+		// ArrayList<Integer> vsPv = tContent.table.get(vs).pv; 
+		ArrayList<Integer> vPv = globalViewer.PVS.get(v);
+		ArrayList<Integer> vsPv = globalViewer.PVS.get(vs);
+		
 		
 		ArrayList<Integer> result = MyUtil.interesect(vPv, vsPv);
 		return result;
@@ -449,17 +549,24 @@ public class GDESIReader extends Reader {
 	}
 
 	
-	private void removeTag(ArrayList<Integer> list, Integer id) {
+	private boolean removeTag(ArrayList<Integer> list, int id) {
 		if (list.size() == 0) { 
 			
 			// log.printf("warning: the list in removeTag is empty ! \n");
 			// System.exit(0);
-			return; 
+			return false;
 		}
+		
+		// log.printf("removing %d from ", id);
+		print(list);
+		
+		
 		
 		int index = -1; 
 		for (int i = 0; i < list.size(); i++ ) { 
+			// log.printf("compare id: %d to list(%d): %d \n" , id, i, list.get(i)); 
 			if (list.get(i) == id) { 
+				// log.printf("changing index and breaking !");
 				index = i;
 				break;
 			}
@@ -467,11 +574,13 @@ public class GDESIReader extends Reader {
 		
 		if (index == -1) { 
 			// log.printf("warning: we cannot find %d in the list ! \n", id);
-			return; 
+			return false;
 		}
 		
+		// log.printf("removeing index %d with value %d (compared to id: %d) ", 
+		//		index, list.get(index), id);
 		list.remove(index);
-
+		return true;
 
 	}
 
@@ -495,7 +604,7 @@ public class GDESIReader extends Reader {
 
 	
 	// TODO: please test me. 
-	private int AG(int t, GDESITagContent tContent) {
+	public int AG(int t, GDESITagContent tContent) {
 		
 		// iterate over all the entities of tContent. 
 		// if they are all the same (and not null) return this value 

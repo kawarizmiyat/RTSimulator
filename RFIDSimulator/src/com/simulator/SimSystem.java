@@ -14,6 +14,8 @@ import com.algorithms.coverage.gde.GDETag;
 import com.algorithms.coverage.gde.LimitedGDEReader;
 import com.algorithms.coverage.gdesi.GDESIReader;
 import com.algorithms.coverage.gdesi.GDESITag;
+import com.algorithms.coverage.gdesi.GDESITagContent;
+import com.algorithms.coverage.gdesi.GlobalViewerGDESI;
 import com.algorithms.coverage.leo.LeoReader;
 import com.algorithms.coverage.leo.LeoTag;
 import com.algorithms.coverage.random.RandomReader;
@@ -35,7 +37,7 @@ public class SimSystem  {
 	public EventQueue future;
 
 	// for keeping statistics
-	private final double END = 200; // marks the end of the simulation period
+	private final double END = 20000; // marks the end of the simulation period
 
 	
 	private final int MAX_ITERATIONS = 2; 
@@ -370,8 +372,10 @@ public class SimSystem  {
 				
 			} else if (algorithm.equals("gdeSi")) {
 				
+				GlobalViewerGDESI globalViewer = new GlobalViewerGDESI(readersSize);
+				
 				for (int i = 0; i < readersSize; i++) { 
-					readersTable.add(new GDESIReader(this, i)); 
+					readersTable.add(new GDESIReader(this, i, globalViewer)); 
 				}
 				
 				for (int i = 0; i < tagsSize; i++) { 
@@ -517,6 +521,80 @@ public class SimSystem  {
 
 	public SimResult getResult() {
 		return simResult;
+	}
+
+
+
+	public void debug() {
+
+
+		GDESITag t = ((GDESITag) tagsTable.get(138));
+		GDESITagContent tc = ((GDESITagContent) t.tagContent);
+		ArrayList<Integer> temp = new ArrayList<Integer>();
+
+		
+		for (int i = 0; i < readersTable.size(); i++) { 
+			
+			log.printf("%d: ", readersTable.get(i).id); 
+			GDESIReader gr =  ( (GDESIReader) readersTable.get(i)); 
+			ArrayList<Integer> activeTags = gr.activeTags;
+			
+			log.printf("(size active: %d) ", activeTags.size());
+			log.printf("(size pv: %d )", gr.globalViewer.PVS.get(gr.id).size() );
+			
+			for (int j = 0; j < activeTags.size(); j++) { 
+				log.printf("%d ", activeTags.get(j));
+				
+				if (activeTags.get(j) == 138) { 
+					log.printf(" (wv:%d) ", gr.wvMap.get(138) );
+					// temp.add(new Integer(gr.wvMap.get(138)));
+		
+					
+					int a = gr.AG(138, tc);
+					log.printf(" (AG : %d) ", a);
+					temp.add(a);
+				}
+			}
+			
+
+
+			log.printf("\n");
+
+			
+		}
+		
+		
+		int maxId = 0, maxSize = ((GDESIReader) readersTable.get(0)).activeTags.size(); 
+		
+		for (int i = 1; i < readersTable.size(); i++) { 
+			int newSize = ((GDESIReader) readersTable.get(i)).activeTags.size(); 
+			if (newSize >= maxSize) { 
+				maxSize = newSize; maxId = i;
+			}
+		}
+		
+		log.printf("maximum is %d with size; %d \n", maxId, maxSize);
+		
+		log.printf("AG(138) : ");
+		for (int i = 0; i < temp.size(); i++) { 
+			log.printf("%d ", temp.get(i));
+		}
+		log.printf("\n");
+		
+		
+		log.println("tag content of 138: " + tc);
+
+		for (int i = 0; i < readersTable.size(); i++) { 
+			GDESIReader gr =  ( (GDESIReader) readersTable.get(i)); 
+			for (int j = 0; j < gr.ownedTags.size(); j++) { 
+				if (gr.ownedTags.get(j) == 138 ) { 
+					log.printf("reader %d owns 138 \n", i);
+				}
+			}
+		}
+		
+		
+		System.exit(0);
 	}
 
 }

@@ -204,13 +204,22 @@ public abstract class Reader {
 		return isTerminatedStatus(status);
 	}
 	
-	public void ownTag(int i) {
+	public boolean ownTag(int tag) {
 		
 		if (D) { 
 			log.printf("reader %d owns tag %d \n", 
-					this.id, i);
+					this.id, tag);
 		}
-		ownedTags.add(i);
+		
+		for (int j = 0; j < ownedTags.size(); j++) { 
+			if (ownedTags.get(j) == tag) { 
+				log.printf("error: reader %d cannot own tag %d twice !", this.id, tag);
+				return false;
+			}
+		}
+		
+		ownedTags.add(tag);
+		return true;
 	}
 	
 }

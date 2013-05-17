@@ -16,12 +16,18 @@ import com.simulator.SimSystem;
 public class Main  {
 	public static void main(String [] args) {
 
+		//new Tester1();
+		//System.exit(0);
+		
 		boolean debug = true; 
 		
-		String[] algString = {"drre" , "rre", "random", 
-				"minMax", "gde", "limGDE1", "limGDE2", "random2", "random3"
-		};
+//		String[] algString = {"drre" , "rre", "random", 
+//				"minMax", "gde", "limGDE1", "limGDE2", "random2", "random3"
+//		};
 
+		// String[] algString = {"drre", "rre", "random", "gde" };
+		String[] algString = {"gdeSi"};
+		
 		
 		StatPair[] statNonRedundant = new StatPair[algString.length];
 		StatPair[] statOverwrites = new StatPair[algString.length];
@@ -67,11 +73,15 @@ public class Main  {
 				// 		"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/normal_r200_t750/";
 			
 				String foldername = 
-						"/home/ahmed/Desktop/Programming/rfid/journal_experiments/exp_graphs/uniform_t750_r100/"; 
-				
+						"/home/ahmed/Desktop/Programming/rfid/journal_experiments/exp_graphs/uniform_t250_r100/"; 
 				
 				String filename = "result_" + k + ".out";
 
+				
+				// String foldername = 
+				// 		"/home/ahmed/Desktop/Git/RandomCoversRep/RandomCovers/conn_cover_r100_t750/"; 
+				// String filename = "t_result_" + k + ".dat";
+				
 
 				System.out.println("opening " + foldername + filename );
 

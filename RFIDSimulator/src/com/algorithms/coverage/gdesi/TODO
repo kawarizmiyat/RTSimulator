@@ -1,0 +1,25 @@
+TODO: 
+
+Problem: 
+GDE-SI is found to be inefficient and slow. The main reason behind that is the way 
+it is implemented in the simulation. Although a distributed version would be efficient, a new 
+optimized sequential (centralized) version would be necessary to improve the performance 
+of the simulation. 
+
+The main issue found (using a profiler - and ituition) is: the creation of large number of 
+integers and hashMap iterators. The first is created from readers writing the actual value of their 
+active tags in each of their neighbor tags. This creates unecessary redundancy. The second problem
+is caused from the function findMax. 
+
+For the first problem: a reader only writes its id and its owner according to reader. 
+There is a cenrtalized table that is updated when all readers terminate the current roud. This 
+table contains the values of each reader. Q: how to know when all readers terminated the execution !
+-- answer: a centralized class that contains a map <id, done>. 
+
+For the FindMax. Note that we only need two values recorded in the tag. 
+
+
+First task: 
+1. Every reader writes Pv in the memory of all its neighbors. There is no need to do that.
+	- instead. the global table contains the values Pv for each reader at each round.
+	

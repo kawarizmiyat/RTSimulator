@@ -26,6 +26,10 @@ public class GDESITag extends Tag {
 	private void append(Message message) {
 		
 		
+		// TODO: we should keep the largest two elements always. 
+		// How to do that ? -- this will be useful for 
+		// findMax function. 
+		
 		this.numOverWrites ++; 
 		GDESIWriteMessage m = (GDESIWriteMessage) message.msgContent; 
 		
@@ -34,7 +38,7 @@ public class GDESITag extends Tag {
 			((GDESITagContent) tagContent).clear();
 		}
 
-		((GDESITagContent) tagContent).add(m.id, m.pv, m.wv, m.round); 
+		((GDESITagContent) tagContent).add(m.id, m.wv, m.round); 
 		
 		if (D) { 
 			log.printf("new tag %d content: ", this.id);

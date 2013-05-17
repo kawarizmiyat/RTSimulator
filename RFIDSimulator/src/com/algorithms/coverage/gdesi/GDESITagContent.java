@@ -29,14 +29,14 @@ public class GDESITagContent extends TagContent {
 	}
 
 
-	public void add(int id, ArrayList<Integer> pv, int wv, int round) {
+	public void add(int id, int wv, int round) {
 		
 		if (round < currentRound) {
 			log.printf("error: adding a GDESITagStruct with a low (outdated) round ");
 			System.exit(0);
 		}
 		
-		GDESITagStruct t = new GDESITagStruct(id, pv, wv, round);
+		GDESITagStruct t = new GDESITagStruct(id,  wv, round);
 		table.put(id, t); 
 		
 		
@@ -71,33 +71,25 @@ public class GDESITagContent extends TagContent {
 
 class GDESITagStruct { 
 	int id; 
-	ArrayList<Integer> pv; 
+
 	int wv; 
 	int round; 
 	
 	public GDESITagStruct() { 
 		id = -1; 
-		pv = new ArrayList<Integer>(); 
 		wv = -1; 
 		round = 0;
 	}
 
-	public GDESITagStruct(int id, ArrayList<Integer> pv, int wv, int round) {
+	public GDESITagStruct(int id, int wv, int round) {
 		this.id = id; 
 		this.wv = wv; 
 		this.round = round; 
 		
-		this.pv = new ArrayList<Integer>();
-		for (int i = 0; i < pv.size(); i ++ ) { 
-			this.pv.add(pv.get(i));
-		}
 	}
 	
 	public String toString() { 
 		String s = "id: " + id + " , pvs: { "; 
-		for (int i = 0; i < pv.size() ; i++) { 
-			s += pv.get(i) + " "; 
-		}
 		s += "}, wv: " + wv + " r: " + round + " "; 
 		return s;
 	}
