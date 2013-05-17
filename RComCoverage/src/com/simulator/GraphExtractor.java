@@ -1,4 +1,4 @@
-package com.filefunctions;
+package com.simulator;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -86,8 +86,22 @@ public class GraphExtractor {
 
 	}
 
-
-
+	public static int getTagsSize(ArrayList<ArrayList<Integer>> g) {
+		// An easy way to implement this is to find the 
+		// maximum id of tags. Here of course, we assume 
+		// that the tags are serially identified from 0 to n - 1 . 
+		
+		int max = -1; 
+		for (int i = 0; i < g.size(); i++) { 
+			for (int j = 0; j < g.get(i).size(); j++) { 
+				if (g.get(i).get(j) > max) { 
+					max = g.get(i).get(j);
+				}
+			}
+		}
+		
+		return max + 1 ;
+	}
 
 
 }
